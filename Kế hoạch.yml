@@ -1,0 +1,60 @@
+Github.
+xác định 4 ngôn ngữ lt: java, python, CSharp, C++.
+Client:
+    - input:
+      --Nhập code qua textbox
+      --upload code từ file
+      --mã hóa code trước khi gửi cho server (encode)
+      --giải mã kết quả nhận từ server (decode)
+    - output:
+      --code đã format
+      --code đã compile
+      --lỗi nếu sai syntax
+      --hướng dẫn sửa lỗi(nếu sai)
+    - giao diện GUI:
+      --textbox để input code
+      --textbox in code đã format
+      --textbox in kết quả run
+      --button đọc file
+      --button "Run" để gửi code cho server xử lý
+      --text/dialog thông báo quá trình xử lý
+
+Server:
+  - input:
+    -- nhận String code từ client.
+    -- giải mã kết quả nhận từ client (decode)
+  - ouput:
+    -- format -> API,HtmlUnit,Jsoup
+    -- compile - run -> API
+     + gợi ý lỗi (quan trọng)
+    -- mã hóa kết quả > gửi lại kết quả cho client (encode)
+  - không cần GUI:
+
+GIT
+Giao diện - Quốc
+
+Format - Trọng 
+
+Check + compile - Thành
+
+bảo mật - Vũ
+client server
+
+Tuấn 1
+  -- Quốc: Tạo Git - thiết kế giao diện
+  -- Vũ: Hoàn thành Client
+  -- Trọng: xác định trang Format và phương thức sử dụng (API/Jsoup/HtmlUnit/...)
+  -- Thành: xác định trang compile và phương thức sử dụng (API/Jsoup/HtmlUnit/...)
+Tuần 2
+  -- Quốc: code form giao diện
+  -- Vũ: Hoàn thành Server
+  -- Trọng: hoàn thành xử lý dữ liệu thông qua trang và phương thức
+  -- Thành: hoàn thành xử lý dữ liệu thông qua trang và phương thức
+Tuần 3
+  -- Quốc: trang trí tối ưu giao diện
+  -- Vũ: hoàn thiện phương thức xử lý bảo mật
+  -- Trọng: tối ưu thời gian xử lý và đầu vào đầu ra
+  -- Thành: tối ưu thời gian xử lý và đầu vào đầu ra
+Tuần 4
+  -- Tổng kết: ghép code thành app hoàn chỉnh
+  -- test
