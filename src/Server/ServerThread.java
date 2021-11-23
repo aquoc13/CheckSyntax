@@ -1,40 +1,42 @@
+package Server;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
 public class ServerThread extends Thread{
-    protected Socket socket;
+    protected final Socket socket;
+    private final BufferedReader in;
+    private final BufferedWriter out;
     private final String fromIP;
-    private static final String BREAK_CONNECT_KEY = "bye"; //Key để break vòng lặp và ngắt kết nối từ Client tới Server
 
     /**
      * Tạo ra một thread mới để kết nối và xử lý yêu cầu từ phía Client
      * @param clientSocket truyền socket kết nối Client vào
      */
-    public ServerThread(Socket clientSocket) {
+    public ServerThread(Socket clientSocket) throws IOException {
         this.socket = clientSocket;
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         this.fromIP = clientSocket.getInetAddress() //tách InetAddress từ socket
                                   .getHostAddress() //in địa chỉ IP từ InetAddress của client kết nối tới
                     + ":" + clientSocket.getPort(); //in port của client kết nối tới từ socket
                                                     //vd: 127.0.0.1:5013
     }
 
+    /**
+     * Sau khi gọi hàm start() từ Thread sẽ tự động chày hàm run()
+     */
     public void run() {
         System.out.println("Client " + fromIP + " is connecting.");
-        //vd: Client 127.0.0.1:5013 is connected.
-
         try {
-            //khởi tạo cổng đầu vào (in) + đầu ra (out)
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-
             //Lặp liên tục để nhận request từ phía Client
             while(true) {
                 try {
                     // Server nhận dữ liệu từ client qua stream
                     String line;
                     line = in.readLine();
-                    if (line.equals(BREAK_CONNECT_KEY))
+                    if (line.equals(Server.BREAK_CONNECT_KEY))
                         break; //Vòng lặp sẽ ngừng khi Client gửi lệnh "bye"
                     System.out.println("Server get: " + line + " from " + fromIP);
 

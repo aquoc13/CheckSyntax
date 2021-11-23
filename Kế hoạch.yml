@@ -3,21 +3,27 @@ xác định 4 ngôn ngữ lt: java, python, CSharp, C++.
 Client:
     - input:
       --Nhập code qua textbox
-      --upload code từ file
+      --Nhập input stdin qua textbox
+      --upload code từ file, URL
       --mã hóa code trước khi gửi cho server (encode)
       --giải mã kết quả nhận từ server (decode)
     - output:
-      --code đã format
-      --code đã compile
+      --code đã format (có thể lưu file)
+      --kết quả compile
+      --tiến trình xử lý
       --lỗi nếu sai syntax
       --hướng dẫn sửa lỗi(nếu sai)
     - giao diện GUI:
       --textbox để input code
+      --textbox để input param stdin
       --textbox in code đã format
       --textbox in kết quả run
-      --button đọc file
       --button "Run" để gửi code cho server xử lý
-      --text/dialog thông báo quá trình xử lý
+      --button "Reset" để clear textbox
+      --button "Save" để lưu code đã format vào file chỉ định
+      --button "Upload from file" để tải code từ file chỉ định
+      --button "URL" để lấy code từ url web
+      --textbox/dialog thông báo quá trình xử lý
 
 Server:
   - input:

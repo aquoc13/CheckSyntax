@@ -1,9 +1,12 @@
+package Server;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    private static final int PORT = 5000;
+    public static final int PORT = 5000;
+    public static final String BREAK_CONNECT_KEY = "bye";
 
     @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String[] args) {
