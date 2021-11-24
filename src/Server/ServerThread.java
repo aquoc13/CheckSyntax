@@ -35,18 +35,16 @@ public class ServerThread extends Thread{
                 try {
                     // Server nhận dữ liệu từ client qua stream
                     String line;
-                    line = in.readLine();
+                    line = receive();
                     if (line.equals(Server.BREAK_CONNECT_KEY))
                         break; //Vòng lặp sẽ ngừng khi Client gửi lệnh "bye"
                     System.out.println("Server get: " + line + " from " + fromIP);
 
-                    //Xử lý dữ liệu bằng class ServerHandler method requestHandle
-                    line = ServerHandler.requestHandle(line);
+                    //Xử lý dữ liệu bằng class ServerHandler method responseHandle
+                    line = Server.responseHandle(line);
 
                     // Server gửi phản hồi ngược lại cho client (chuỗi đảo ngược)
-                    out.write(line);
-                    out.newLine();
-                    out.flush();
+                    send(line);
                     System.out.println("Server response: " + line + " to " + fromIP);
                 } catch (SocketException | NullPointerException ignore) {
                     break;
@@ -54,12 +52,26 @@ public class ServerThread extends Thread{
             }
 
             //Thực hiện đóng kết nối socket và đóng cổng đầu vào (in) + đầu ra (out).
-            in.close();
-            out.close();
-            socket.close();
+            close();
             System.out.println("Server closed connection with " + fromIP);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void send(String data) throws IOException, SocketException {
+        out.write(data);
+        out.newLine();
+        out.flush();
+    }
+
+    public String receive() throws IOException, NullPointerException {
+        return in.readLine();
+    }
+
+    public void close() throws IOException {
+        in.close();
+        out.close();
+        socket.close();
     }
 }
