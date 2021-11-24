@@ -4,7 +4,6 @@ import Server.ServerDataPacket;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class Client {
     public static final int PORT = 5000;
