@@ -1,8 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-package ClientGUI;
+package Client;
 
 /**
  *
@@ -34,7 +30,7 @@ public class DialogFile extends MoveJframe {
         _btnOpenFile = new javax.swing.JButton();
         background = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -73,13 +69,13 @@ public class DialogFile extends MoveJframe {
         });
         jPanel1.add(_btnOK, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 110, 80, 44));
 
-        _btnOpenFile.setIcon(new javax.swing.ImageIcon("/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/file-icon.png")); // NOI18N
+        _btnOpenFile.setIcon(new javax.swing.ImageIcon("image/file-icon.png")); // NOI18N
         jPanel1.add(_btnOpenFile, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 50, 60, 40));
         _btnOpenFile.setFocusPainted(false);
         _btnOpenFile.setContentAreaFilled(false);
         _btnOpenFile.setBorderPainted(false);
 
-        background.setIcon(new javax.swing.ImageIcon("/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/dialog-link.png")); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon("image/dialog-link.png")); // NOI18N
         jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 400, 180));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

@@ -1,12 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-package ClientGUI;
-
-import java.awt.GraphicsEnvironment;
-import static java.awt.GridBagConstraints.BOTH;
-import javax.swing.JFrame;
+package Client;
 
 /**
  *
@@ -60,7 +52,7 @@ public class GUI extends MoveJframe {
         jLabel5 = new javax.swing.JLabel();
         background = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -74,7 +66,7 @@ public class GUI extends MoveJframe {
         subTitle.setText("Java, Python, C# and C compiler, syntax checking tool. ");
         jPanel1.add(subTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, -1, -1));
 
-        close.setIcon(new javax.swing.ImageIcon("/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/close.png")); // NOI18N
+        close.setIcon(new javax.swing.ImageIcon("image/close.png")); // NOI18N
         close.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 closeMouseClicked(evt);
@@ -85,7 +77,7 @@ public class GUI extends MoveJframe {
         _btnFormat.setBackground(new java.awt.Color(239, 94, 29));
         _btnFormat.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         _btnFormat.setForeground(new java.awt.Color(255, 255, 255));
-        _btnFormat.setIcon(new javax.swing.ImageIcon("/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/format_paint.png")); // NOI18N
+        _btnFormat.setIcon(new javax.swing.ImageIcon("image/format_paint.png")); // NOI18N
         _btnFormat.setText("format");
         _btnFormat.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         _btnFormat.addActionListener(new java.awt.event.ActionListener() {
@@ -104,7 +96,7 @@ public class GUI extends MoveJframe {
         _btnUpFile1.setBackground(new java.awt.Color(0, 121, 239));
         _btnUpFile1.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         _btnUpFile1.setForeground(new java.awt.Color(255, 255, 255));
-        _btnUpFile1.setIcon(new javax.swing.ImageIcon("/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/cloud_upload.png")); // NOI18N
+        _btnUpFile1.setIcon(new javax.swing.ImageIcon("image/cloud_upload.png")); // NOI18N
         _btnUpFile1.setText("Upload your file");
         _btnUpFile1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         _btnUpFile1.addActionListener(new java.awt.event.ActionListener() {
@@ -145,7 +137,7 @@ public class GUI extends MoveJframe {
         _btnLink.setBackground(new java.awt.Color(13, 21, 37));
         _btnLink.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         _btnLink.setForeground(new java.awt.Color(255, 255, 255));
-        _btnLink.setIcon(new javax.swing.ImageIcon("/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/link.png")); // NOI18N
+        _btnLink.setIcon(new javax.swing.ImageIcon("image/link.png")); // NOI18N
         _btnLink.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         _btnLink.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -157,7 +149,7 @@ public class GUI extends MoveJframe {
         _btnDownload.setBackground(new java.awt.Color(13, 21, 37));
         _btnDownload.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         _btnDownload.setForeground(new java.awt.Color(255, 255, 255));
-        _btnDownload.setIcon(new javax.swing.ImageIcon("/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/save_alt.png")); // NOI18N
+        _btnDownload.setIcon(new javax.swing.ImageIcon("image/save_alt.png")); // NOI18N
         _btnDownload.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         _btnDownload.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -169,7 +161,7 @@ public class GUI extends MoveJframe {
         _btnRun.setBackground(new java.awt.Color(4, 74, 21));
         _btnRun.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         _btnRun.setForeground(new java.awt.Color(108, 216, 131));
-        _btnRun.setIcon(new javax.swing.ImageIcon("/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/run.png")); // NOI18N
+        _btnRun.setIcon(new javax.swing.ImageIcon("image/run.png")); // NOI18N
         _btnRun.setText("RUN");
         _btnRun.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         _btnRun.addActionListener(new java.awt.event.ActionListener() {
@@ -211,7 +203,7 @@ public class GUI extends MoveJframe {
         jLabel5.setText("Process");
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(431, 697, -1, -1));
 
-        background.setIcon(new javax.swing.ImageIcon("/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/background.png")); // NOI18N
+        background.setIcon(new javax.swing.ImageIcon("image/background.png")); // NOI18N
         jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 6, 690, 900));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

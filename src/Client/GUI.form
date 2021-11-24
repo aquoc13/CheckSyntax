@@ -74,7 +74,7 @@
         <Component class="javax.swing.JLabel" name="close">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/close.png"/>
+              <Image iconType="2" name="image/close.png"/>
             </Property>
           </Properties>
           <Events>
@@ -98,7 +98,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/format_paint.png"/>
+              <Image iconType="2" name="image/format_paint.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="format"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
@@ -152,7 +152,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/cloud_upload.png"/>
+              <Image iconType="2" name="image/cloud_upload.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Upload your file"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
@@ -274,7 +274,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/link.png"/>
+              <Image iconType="2" name="image/link.png"/>
             </Property>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Hand Cursor"/>
@@ -301,7 +301,7 @@
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/save_alt.png"/>
+              <Image iconType="2" name="image/save_alt.png"/>
             </Property>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
               <Color id="Hand Cursor"/>
@@ -328,7 +328,7 @@
               <Color blue="83" green="d8" red="6c" type="rgb"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/run.png"/>
+              <Image iconType="2" name="image/run.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="RUN"/>
             <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
@@ -451,7 +451,7 @@
         <Component class="javax.swing.JLabel" name="background">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="/Users/danganhquoc/Desktop/laptrinhmang/project/CheckSyntax/image/background.png"/>
+              <Image iconType="2" name="image/background.png"/>
             </Property>
           </Properties>
           <Constraints>
