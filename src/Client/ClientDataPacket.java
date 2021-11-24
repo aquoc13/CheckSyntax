@@ -1,5 +1,6 @@
 package Client;
 
+import Server.ServerDataPacket;
 import com.google.gson.*;
 
 public class ClientDataPacket {
@@ -41,6 +42,19 @@ public class ClientDataPacket {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonElement je = JsonParser.parseString(packet.toString());
         return gson.toJson(je);
+    }
+
+    /**
+     * Khởi tạo data packet cho client từ dữ liệu JSON
+     * @param dataPacketJSON dữ liệu dạng JSON
+     */
+    public static ClientDataPacket unpack(String dataPacketJSON) {
+        JsonObject packet = JsonParser.parseString(dataPacketJSON).getAsJsonObject();
+        return new ClientDataPacket(
+                packet.get("language").getAsString(),
+                packet.get("versionIndex").getAsString(),
+                packet.get("stdin").getAsString(),
+                packet.get("script").getAsString());
     }
 
     public String getLanguage() {

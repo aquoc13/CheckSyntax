@@ -4,6 +4,7 @@ import com.google.gson.*;
 
 public class ServerDataPacket {
     private final String description;   //mô tả xử lý
+    private final String format;        //code sau khi format
     private final String output;        //kết quả trả về
     private final String statusCode;    //mã trạng thái
     private final String memory;        //bộ nhớ sử dụng
@@ -16,14 +17,16 @@ public class ServerDataPacket {
     public ServerDataPacket(String dataPacketJSON) {
         JsonObject packet = JsonParser.parseString(dataPacketJSON).getAsJsonObject();
         this.description = packet.get("description").getAsString();
+        this.format = packet.get("format").getAsString();
         this.output = packet.get("output").getAsString();
         this.statusCode = packet.get("statusCode").getAsString();
         this.memory = packet.get("memory").getAsString();
         this.cpuTime = packet.get("cpuTime").getAsString();
     }
 
-    public ServerDataPacket(String Description, String output, String statusCode, String memory, String cpuTime) {
+    public ServerDataPacket(String Description, String format, String output, String statusCode, String memory, String cpuTime) {
         this.description = Description;
+        this.format = format;
         this.output = output;
         this.statusCode = statusCode;
         this.memory = memory;
@@ -37,6 +40,7 @@ public class ServerDataPacket {
     public String pack() {
         JsonObject packet = new JsonObject();
         packet.addProperty("description", description);
+        packet.addProperty("format", format);
         packet.addProperty("output", output);
         packet.addProperty("statusCode", statusCode);
         packet.addProperty("memory", memory);
@@ -47,8 +51,27 @@ public class ServerDataPacket {
         return gson.toJson(je);
     }
 
+    /**
+     * Khởi tạo data packet cho server từ dữ liệu JSON
+     * @param dataPacketJSON dữ liệu dạng JSON
+     */
+    public static ServerDataPacket unpack(String dataPacketJSON) {
+        JsonObject packet = JsonParser.parseString(dataPacketJSON).getAsJsonObject();
+        return new ServerDataPacket(
+                    packet.get("description").getAsString(),
+                    packet.get("format").getAsString(),
+                    packet.get("output").getAsString(),
+                    packet.get("statusCode").getAsString(),
+                    packet.get("memory").getAsString(),
+                    packet.get("cpuTime").getAsString());
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public String getFormat() {
+        return format;
     }
 
     public String getOutput() {

@@ -1,8 +1,10 @@
 package Client;
 
+import Server.ServerDataPacket;
+
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
+import java.util.Arrays;
 
 public class Client {
     public static final int PORT = 5000;
@@ -20,7 +22,7 @@ public class Client {
         out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
 
-    public static void send(String data) throws IOException, SocketException {
+    public static void send(String data) throws IOException {
         out.write(data);
         out.newLine();
         out.flush();
@@ -36,5 +38,13 @@ public class Client {
         socket.close();
     }
 
+    public static String requestHandle(String language, String versionIndex, String stdin, String script) {
+        ClientDataPacket clientPacket = new ClientDataPacket(language,versionIndex,stdin,script);
+        return clientPacket.pack();
+    }
 
+    public static String responseHandle(String data) {
+        ServerDataPacket serverPacket = ServerDataPacket.unpack(data);
+        return serverPacket.pack();
+    }
 }
