@@ -1,4 +1,4 @@
-package Client;
+package ClientGUI;
 
 import javax.swing.JFrame;
 import java.awt.*;
@@ -10,10 +10,9 @@ import java.io.IOException;
  *
  * @author danganhquoc
  */
-class MoveJframe extends JFrame {
-    public MoveJframe() {
+class MoveJFrame extends JFrame {
+    public MoveJFrame() {
         this.setUndecorated(true);
-
 
         FrameDragListener frameDragListener = new FrameDragListener(this);
         this.addMouseListener(frameDragListener);
@@ -25,12 +24,7 @@ class MoveJframe extends JFrame {
 
     }
 
-    public static void main(String[] args) throws IOException {
-        new MoveJframe();
-    }
-
     public static class FrameDragListener extends MouseAdapter {
-
         private final JFrame frame;
         private Point mouseDownCompCoords = null;
 

@@ -1,5 +1,7 @@
 package Server;
 
+import Client.ClientDataPacket;
+
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -36,12 +38,13 @@ public class ServerThread extends Thread{
                     // Server nhận dữ liệu từ client qua stream
                     String line;
                     line = receive();
+                    if (line.isEmpty()) continue;
                     if (line.equals(Server.BREAK_CONNECT_KEY))
                         break; //Vòng lặp sẽ ngừng khi Client gửi lệnh "bye"
                     System.out.println("Server get: " + line + " from " + fromIP);
 
                     //Xử lý dữ liệu bằng class ServerHandler method responseHandle
-                    line = Server.responseHandle(line);
+                    line = Server.responseHandle(new ClientDataPacket(line));
 
                     // Server gửi phản hồi ngược lại cho client (chuỗi đảo ngược)
                     send(line);
