@@ -5,10 +5,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class FileHandler {
-    public static String latestFile;
+    public static final String[] supportedExtension = new String[] { "java", "py", "cs", "cpp" };
     /**
      * Mở Dialog để người dùng chọn file muốn thao tác
      * @param frame truyền vào JFrame là parent cho dialog
@@ -45,7 +46,6 @@ public class FileHandler {
             }
             scanner.close();
             fileInputStream.close();
-            latestFile = path; //lưu lại đường dẫn file vừa mở
             return builder.toString();
         } catch (IOException ignored) {
             return null; //trả về chuỗi null nếu không thể đọc file
@@ -81,9 +81,12 @@ public class FileHandler {
      * @param data dữ liệu đầu vào kiểu String muốn viết vào FILE
      * @return Boolean - True nếu viết thành công và FALSE nếu thất bại
      */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static Boolean write(String path, String data) {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(path);
+            File yourFile = new File(path);
+            yourFile.createNewFile(); //Tạo file nếu ko tồn tại
+            FileOutputStream fileOutputStream = new FileOutputStream(yourFile, false);
             //Chuyễn dữ liệu kiểu String sang byte[] để viết vào file
             byte[] bytes = data.getBytes();
             fileOutputStream.write(bytes);
@@ -92,5 +95,25 @@ public class FileHandler {
         } catch (IOException ignored) {
             return false;
         }
+    }
+
+    /**
+     * Lấy định dạng của File ví dụ: py cho file Python abc.py
+     * @param path đường dẫn file
+     * @return String - đuôi file,
+     *         NULL nếu url không đúng định dạng
+     */
+    public static String getFileExtension(String path) {
+        final int lastDot_Index = path.lastIndexOf(".");      //vị trí của "." cuối cùng
+        final int start_Index = 0;                               //vị trí bắt đầu chuỗi
+        final int end_Index = path.length() - 1;                 //vị trí kết thúc chuỗi
+
+        //"." cuối cùng không được nằm ở đầu hay cuối đoạn code
+        if (lastDot_Index != start_Index &&
+                lastDot_Index != end_Index && lastDot_Index != -1) {
+            //Cắt chuỗi string từ dấu chấm "." cuối cùng tới hết.
+            return path.substring(lastDot_Index + 1);
+        }
+        return null;
     }
 }

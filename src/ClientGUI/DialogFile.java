@@ -1,16 +1,29 @@
-package Client;
+package ClientGUI;
+
+import Services.FileHandler;
+
+import javax.swing.*;
 
 /**
  *
  * @author danganhquoc
  */
-public class DialogFile extends MoveJframe {
-
+public class DialogFile extends MoveJFrame {
+    public static String latestFile = "";
+    private static boolean isOK = false;
     /**
      * Creates new form DialogFile
      */
     public DialogFile() {
         initComponents();
+    }
+
+    public static boolean isOK() {
+        if (isOK) {
+            isOK = false;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -30,7 +43,7 @@ public class DialogFile extends MoveJframe {
         _btnOpenFile = new javax.swing.JButton();
         background = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -40,11 +53,7 @@ public class DialogFile extends MoveJframe {
         jLabel2.setText("choose your file");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(27, 27, -1, -1));
 
-        input.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                inputActionPerformed(evt);
-            }
-        });
+        input.setText(latestFile);
         jPanel1.add(input, new org.netbeans.lib.awtextra.AbsoluteConstraints(27, 50, 290, 44));
 
         _btnCancel.setBackground(new java.awt.Color(237, 245, 255));
@@ -70,10 +79,15 @@ public class DialogFile extends MoveJframe {
         jPanel1.add(_btnOK, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 110, 80, 44));
 
         _btnOpenFile.setIcon(new javax.swing.ImageIcon("image/file-icon.png")); // NOI18N
-        jPanel1.add(_btnOpenFile, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 50, 60, 40));
         _btnOpenFile.setFocusPainted(false);
         _btnOpenFile.setContentAreaFilled(false);
         _btnOpenFile.setBorderPainted(false);
+        _btnOpenFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnOpenFileActionPerformed(evt);
+            }
+        });
+        jPanel1.add(_btnOpenFile, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 50, 60, 40));
 
         background.setIcon(new javax.swing.ImageIcon("image/dialog-link.png")); // NOI18N
         jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 400, 180));
@@ -94,53 +108,21 @@ public class DialogFile extends MoveJframe {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_inputActionPerformed
-
     private void _btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnCancelActionPerformed
-        // TODO add your handling code here:
-        System.exit(0);
+        isOK = false;
+        this.dispose();
     }//GEN-LAST:event__btnCancelActionPerformed
 
     private void _btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnOKActionPerformed
-        // TODO add your handling code here:
+        latestFile = input.getText();
+        isOK = true;
+        this.dispose();
     }//GEN-LAST:event__btnOKActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DialogFile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DialogFile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DialogFile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DialogFile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new DialogFile().setVisible(true);
-            }
-        });
-    }
+    private void _btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnOpenFile
+        String path = FileHandler.fileChooser(this);
+        input.setText(path);
+    }//GEN-LAST:event__btnOpenFile
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnCancel;

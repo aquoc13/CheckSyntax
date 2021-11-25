@@ -1,10 +1,19 @@
-package Client;
+package ClientGUI;
+
+import Client.Client;
+import Server.ServerDataPacket;
+import Services.FileHandler;
+
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  *
  * @author danganhquoc
  */
-public class GUI extends MoveJframe {
+public class GUI extends MoveJFrame {
 
     /**
      * Creates new form GUI
@@ -12,6 +21,12 @@ public class GUI extends MoveJframe {
     public GUI() {
         initComponents();
         this.setLocationRelativeTo(null);
+        if (Client.checkConnection()) {
+            process.append(Client.SUCCESS_CONNECT + "\n");
+        } else {
+            process.append(Client.FAIL_CONNECT + "\n");
+            process.append("Click Run to reconnect !\n");
+        }
     }
     
     static boolean maximized = true;
@@ -67,6 +82,7 @@ public class GUI extends MoveJframe {
         jPanel1.add(subTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, -1, -1));
 
         close.setIcon(new javax.swing.ImageIcon("image/close.png")); // NOI18N
+        close.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         close.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 closeMouseClicked(evt);
@@ -187,6 +203,7 @@ public class GUI extends MoveJframe {
         process.setColumns(20);
         process.setForeground(new java.awt.Color(255, 255, 255));
         process.setRows(5);
+        process.setEditable(false);
         jScrollPane4.setViewportView(process);
 
         jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(431, 719, -1, 160));
@@ -195,6 +212,7 @@ public class GUI extends MoveJframe {
         compiler.setColumns(20);
         compiler.setForeground(new java.awt.Color(255, 255, 255));
         compiler.setRows(5);
+        compiler.setEditable(false);
         jScrollPane5.setViewportView(compiler);
 
         jPanel1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 719, 385, 160));
@@ -221,7 +239,14 @@ public class GUI extends MoveJframe {
     }// </editor-fold>//GEN-END:initComponents
 
     private void closeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeMouseClicked
-        // TODO add your handling code here:
+        try {
+            if (Client.checkConnection()) {
+                Client.send(Client.BREAK_CONNECT_KEY);
+                Client.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.exit(0);
     }//GEN-LAST:event_closeMouseClicked
 
@@ -230,53 +255,125 @@ public class GUI extends MoveJframe {
     }//GEN-LAST:event__btnFormatActionPerformed
 
     private void _btnUpFile1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnUpFile1ActionPerformed
-        // TODO add your handling code here:
-        DialogFile link = new DialogFile();
-        link.setVisible(true);
+        DialogFile dialogFile = new DialogFile();
+        dialogFile.setVisible(true);
+        dialogFile.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent e) {
+                if (DialogFile.isOK()) {
+                    DialogFile.latestFile = checkNullExtension(DialogFile.latestFile);
+                    process.append("Open: " + DialogFile.latestFile + "\n");
+
+                    String fileType = FileHandler.getFileExtension(DialogFile.latestFile);
+                    process.append("Type: " + fileType + "\n");
+                    if (Arrays.asList(FileHandler.supportedExtension).contains(fileType)) {
+                        int typeIndex = Arrays.asList(FileHandler.supportedExtension).indexOf(fileType);
+                        selectedBox.setSelectedIndex(typeIndex);
+                        process.append("Selected language " + selectedBox.getSelectedItem() + "\n");
+                    } else process.append("File language isn't supported\n");
+
+                    String code = FileHandler.read(DialogFile.latestFile);
+                    if (code != null && !code.isEmpty()) {
+                        sourceCode.setText(code);
+                        process.append("Import success.\n");
+                    } else process.append("Import fail: File empty.\n");
+
+
+                }
+            }
+        });
     }//GEN-LAST:event__btnUpFile1ActionPerformed
 
     private void _btnLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnLinkActionPerformed
-        // TODO add your handling code here:
-        DialogLink link = new DialogLink();
-        link.setVisible(true);
-        
+        DialogLink dialogLink = new DialogLink();
+        dialogLink.setVisible(true);
+        dialogLink.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent e) {
+                if (DialogLink.isOK()) {
+                    String fileType = FileHandler.getFileExtension(DialogLink.latestURL);
+                    process.append("Connect: " + DialogLink.latestURL + "\n");
+
+                    if (Arrays.asList(FileHandler.supportedExtension).contains(fileType)) {
+                        int typeIndex = Arrays.asList(FileHandler.supportedExtension).indexOf(fileType);
+                        selectedBox.setSelectedIndex(typeIndex);
+                        process.append("Selected language " + selectedBox.getSelectedItem() + "\n");
+                    } else process.append("File language isn't supported" + "\n");
+
+                    String code = FileHandler.readURL(DialogLink.latestURL);
+                    if (code != null && !code.isEmpty()) {
+                        sourceCode.setText(code);
+                        process.append("Import success." + "\n");
+                    } else process.append("Import fail: Web empty." + "\n");
+                }
+            }
+        });
     }//GEN-LAST:event__btnLinkActionPerformed
 
     private void _btnDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnDownloadActionPerformed
-        // TODO add your handling code here:
+        DialogFile dialogFile = new DialogFile();
+        dialogFile.setVisible(true);
+        dialogFile.addWindowListener(new WindowAdapter() {
+            public void windowClosed(WindowEvent e) {
+                if (DialogFile.isOK()) {
+                    DialogFile.latestFile = checkNullExtension(DialogFile.latestFile);
+                    process.append("Open: " + DialogFile.latestFile + "\n");
+
+                    String code = prettifyCode.getText();
+                    FileHandler.write(DialogFile.latestFile, code);
+                    process.append("Export success." + "\n");
+                }
+            }
+        });
     }//GEN-LAST:event__btnDownloadActionPerformed
 
     private void _btnRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnRunActionPerformed
-        // TODO add your handling code here:
+        try {
+            int selectedIndex = selectedBox.getSelectedIndex();
+            String language = Client.supportedLanguage[selectedIndex];
+            String versionIndex = Client.versionIndex;
+            String script = sourceCode.getText();
+            String stdin = input.getText();
+
+            String clientDataPacket = Client.requestHandle(language,versionIndex,stdin,script);
+            Client.send(clientDataPacket);
+
+            String response = Client.receive();
+            ServerDataPacket serverPacket = Client.responseHandle(response);
+            compiler.append(serverPacket.pack());
+
+        } catch (IOException | NullPointerException e) {
+            if (!Client.checkConnection()) {
+                try {
+                    Client.connectServer();
+                    Client.send("");
+                } catch (IOException f) {
+                    process.append(Client.FAIL_CONNECT + "\n");
+                    process.append("Try again !" + "\n");
+                    return;
+                }
+                process.append(Client.SUCCESS_CONNECT + "\n");
+            }
+        }
     }//GEN-LAST:event__btnRunActionPerformed
+
+    /**
+     * Kiếm tra path có đuôi file không nếu không tự thêm đuôi định dạng vào dựa theo ngôn ngữ đang chọn
+     * @param path đường dẫn file.
+     * @return path sau khi xử lý.
+     */
+    private String checkNullExtension(String path) {
+        String fileType = FileHandler.getFileExtension(path);
+        if (fileType == null || fileType.isEmpty()) {
+            int selectedIndex = selectedBox.getSelectedIndex();
+            String selectedType = Arrays.asList(FileHandler.supportedExtension).get(selectedIndex);
+            return path + "." + selectedType;
+        }
+        return path;
+    }
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {

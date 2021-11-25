@@ -1,6 +1,7 @@
 package Server;
 
 import Client.ClientDataPacket;
+import Security.Encoder;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -25,22 +26,31 @@ public class Server {
 
     /**
      * Hàm dùng để xử lý dữ liệu từ Client gửi tới
-     * @param data dữ liệu đầu vào kiểu String
+     * @param data dữ liệu từ client đã bị mã hóa
+     * @return ClientDataPacket - Gói dữ liệu Client
+     */
+    public static ClientDataPacket requestHandle(String data) {
+        String decodedData = Encoder.decode(data);
+        return ClientDataPacket.unpack(decodedData);
+    }
+
+    /**
+     * Hàm dùng để xử lý dữ liệu trả về cho client
+     * @param dataPacket Gói dự liệu client
      * @return String - dữ liệu đã qua xử lý
      */
-    public static String responseHandle(String data) {
-        ClientDataPacket clientPacket = ClientDataPacket.unpack(data);
+    public static String responseHandle(ClientDataPacket dataPacket) {
         ServerDataPacket serverPacket = new ServerDataPacket(
                 "Demo run - "
-                        + clientPacket.getLanguage()
-                        + clientPacket.getVersionIndex()
+                        + dataPacket.getLanguage()
+                        + " version: "+ dataPacket.getVersionIndex()
                         + " - input: "
-                        + clientPacket.getStdin(),
-                clientPacket.getScript(),
-                clientPacket.toString(),
+                        + dataPacket.getStdin(),
+                dataPacket.getScript(),
+                dataPacket.toString(),
                 "000",
                 "000",
                 "0ms");
-        return serverPacket.pack();
+        return Encoder.encode(serverPacket.pack());
     }
 }

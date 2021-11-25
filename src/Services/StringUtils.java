@@ -32,26 +32,6 @@ public class StringUtils {
     }
 
     /**
-     * Lấy định dạng của File ví dụ: py cho file Python abc.py
-     * @param path đường dẫn file
-     * @return String - đuôi file,
-     *         NULL nếu url không đúng định dạng
-     */
-    public static String getFileExtension(String path) {
-        final int lastDot_Index = path.lastIndexOf(".");      //vị trí của "." cuối cùng
-        final int start_Index = 0;                               //vị trí bắt đầu chuỗi
-        final int end_Index = path.length() - 1;                 //vị trí kết thúc chuỗi
-
-        //"." cuối cùng không được nằm ở đầu hay cuối đoạn code
-        if (lastDot_Index != start_Index &&
-            lastDot_Index != end_Index) {
-            //Cắt chuỗi string từ dấu chấm "." cuối cùng tới hết.
-            return path.substring(lastDot_Index + 1);
-        }
-        return null;
-    }
-
-    /**
      * Copy chuỗi
      * @param textToCopy chuỗi muốn copy
      */
