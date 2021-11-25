@@ -44,7 +44,8 @@ public class ServerThread extends Thread{
                     System.out.println("Server get: " + line + " from " + fromIP);
 
                     //Xử lý dữ liệu bằng class ServerHandler method responseHandle
-                    line = Server.responseHandle(new ClientDataPacket(line));
+                    ClientDataPacket packet = Server.requestHandle(line);
+                    line = Server.responseHandle(packet);
 
                     // Server gửi phản hồi ngược lại cho client (chuỗi đảo ngược)
                     send(line);

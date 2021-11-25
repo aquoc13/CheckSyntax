@@ -21,11 +21,15 @@ public class GUI extends MoveJFrame {
     public GUI() {
         initComponents();
         this.setLocationRelativeTo(null);
-        if (Client.checkConnection()) {
-            process.append(Client.SUCCESS_CONNECT + "\n");
-        } else {
+
+        try {
+            Client.connectServer();
+        } catch (IOException e) {
             process.append(Client.FAIL_CONNECT + "\n");
             process.append("Click Run to reconnect !\n");
+        }
+        if (Client.checkConnection()) {
+            process.append(Client.SUCCESS_CONNECT + "\n");
         }
     }
     
@@ -245,7 +249,8 @@ public class GUI extends MoveJFrame {
                 Client.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            process.append(Client.FAIL_CONNECT + "\n");
+            process.append("Click Run to reconnect !\n");
         }
         System.exit(0);
     }//GEN-LAST:event_closeMouseClicked
@@ -341,17 +346,15 @@ public class GUI extends MoveJFrame {
             compiler.append(serverPacket.pack());
 
         } catch (IOException | NullPointerException e) {
-            if (!Client.checkConnection()) {
-                try {
-                    Client.connectServer();
-                    Client.send("");
-                } catch (IOException f) {
-                    process.append(Client.FAIL_CONNECT + "\n");
-                    process.append("Try again !" + "\n");
-                    return;
-                }
-                process.append(Client.SUCCESS_CONNECT + "\n");
+            try {
+                Client.connectServer();
+                Client.send("");
+            } catch (IOException f) {
+                process.append(Client.FAIL_CONNECT + "\n");
+                process.append("Try again !" + "\n");
+                return;
             }
+            process.append(Client.SUCCESS_CONNECT + "\n");
         }
     }//GEN-LAST:event__btnRunActionPerformed
 
@@ -381,7 +384,6 @@ public class GUI extends MoveJFrame {
                 
             }
         });
-
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
