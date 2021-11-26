@@ -1,8 +1,11 @@
 package Services;
 
+import javax.crypto.spec.SecretKeySpec;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.security.Key;
+import java.util.Base64;
 
 public class StringUtils {
     /**
@@ -39,5 +42,9 @@ public class StringUtils {
         StringSelection stringSelection = new StringSelection(textToCopy);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
+    }
+
+    public static String getStringFromKey(Key key) {
+        return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 }

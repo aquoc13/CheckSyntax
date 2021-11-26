@@ -9,10 +9,6 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Arrays;
 
-/**
- *
- * @author danganhquoc
- */
 public class GUI extends MoveJFrame {
 
     /**
@@ -21,19 +17,14 @@ public class GUI extends MoveJFrame {
     public GUI() {
         initComponents();
         this.setLocationRelativeTo(null);
-
-        try {
-            Client.connectServer();
-        } catch (IOException e) {
-            process.append(Client.FAIL_CONNECT + "\n");
-            process.append("Click Run to reconnect !\n");
-        }
-        if (Client.checkConnection()) {
-            process.append(Client.SUCCESS_CONNECT + "\n");
-        }
+        this.setEnabled(false);
     }
     
     static boolean maximized = true;
+
+    public void appendProcess(String text) {
+        process.append(text + "\n");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -208,6 +199,8 @@ public class GUI extends MoveJFrame {
         process.setForeground(new java.awt.Color(255, 255, 255));
         process.setRows(5);
         process.setEditable(false);
+        process.setLineWrap(true);
+        process.setWrapStyleWord(true);
         jScrollPane4.setViewportView(process);
 
         jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(431, 719, -1, 160));
@@ -261,10 +254,12 @@ public class GUI extends MoveJFrame {
 
     private void _btnUpFile1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnUpFile1ActionPerformed
         DialogFile dialogFile = new DialogFile();
+        dialogFile.setLocationRelativeTo(this);
         dialogFile.setVisible(true);
         dialogFile.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
                 if (DialogFile.isOK()) {
+                    process.append("\n");
                     DialogFile.latestFile = checkNullExtension(DialogFile.latestFile);
                     process.append("Open: " + DialogFile.latestFile + "\n");
 
@@ -274,7 +269,7 @@ public class GUI extends MoveJFrame {
                         int typeIndex = Arrays.asList(FileHandler.supportedExtension).indexOf(fileType);
                         selectedBox.setSelectedIndex(typeIndex);
                         process.append("Selected language " + selectedBox.getSelectedItem() + "\n");
-                    } else process.append("File language isn't supported\n");
+                    } else process.append("File language isn't supported.\n");
 
                     String code = FileHandler.read(DialogFile.latestFile);
                     if (code != null && !code.isEmpty()) {
@@ -290,10 +285,12 @@ public class GUI extends MoveJFrame {
 
     private void _btnLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnLinkActionPerformed
         DialogLink dialogLink = new DialogLink();
+        dialogLink.setLocationRelativeTo(this);
         dialogLink.setVisible(true);
         dialogLink.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
                 if (DialogLink.isOK()) {
+                    process.append("\n");
                     String fileType = FileHandler.getFileExtension(DialogLink.latestURL);
                     process.append("Connect: " + DialogLink.latestURL + "\n");
 
@@ -301,7 +298,7 @@ public class GUI extends MoveJFrame {
                         int typeIndex = Arrays.asList(FileHandler.supportedExtension).indexOf(fileType);
                         selectedBox.setSelectedIndex(typeIndex);
                         process.append("Selected language " + selectedBox.getSelectedItem() + "\n");
-                    } else process.append("File language isn't supported" + "\n");
+                    } else process.append("File language isn't supported." + "\n");
 
                     String code = FileHandler.readURL(DialogLink.latestURL);
                     if (code != null && !code.isEmpty()) {
@@ -315,10 +312,12 @@ public class GUI extends MoveJFrame {
 
     private void _btnDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnDownloadActionPerformed
         DialogFile dialogFile = new DialogFile();
+        dialogFile.setLocationRelativeTo(this);
         dialogFile.setVisible(true);
         dialogFile.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
                 if (DialogFile.isOK()) {
+                    process.append("\n");
                     DialogFile.latestFile = checkNullExtension(DialogFile.latestFile);
                     process.append("Open: " + DialogFile.latestFile + "\n");
 
@@ -339,16 +338,23 @@ public class GUI extends MoveJFrame {
             String stdin = input.getText();
 
             String clientDataPacket = Client.requestHandle(language,versionIndex,stdin,script);
+            process.append("\nCollected user input.\n");
             Client.send(clientDataPacket);
+            System.out.println("Sent packet: " + clientDataPacket + "\n");
+            process.append("Sent request.\n");
 
             String response = Client.receive();
+            System.out.println("Receive packet: " + response + "\n");
+            process.append("Receive response.\n");
             ServerDataPacket serverPacket = Client.responseHandle(response);
+            process.append("Print result.\n");
+            System.out.println("Result:\n" + serverPacket.pack());
             compiler.append(serverPacket.pack());
 
         } catch (IOException | NullPointerException e) {
+            process.append("Lost connections, ");
             try {
                 Client.connectServer();
-                Client.send("");
             } catch (IOException f) {
                 process.append(Client.FAIL_CONNECT + "\n");
                 process.append("Try again !" + "\n");

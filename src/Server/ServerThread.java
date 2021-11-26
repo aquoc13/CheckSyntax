@@ -1,16 +1,20 @@
 package Server;
 
 import Client.ClientDataPacket;
+import Security.RSA_Encryptor;
+import Services.StringUtils;
 
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
+import java.security.PublicKey;
 
 public class ServerThread extends Thread{
     protected final Socket socket;
     private final BufferedReader in;
     private final BufferedWriter out;
     private final String fromIP;
+    private String secretKey;
 
     /**
      * Tạo ra một thread mới để kết nối và xử lý yêu cầu từ phía Client
@@ -30,7 +34,6 @@ public class ServerThread extends Thread{
      * Sau khi gọi hàm start() từ Thread sẽ tự động chày hàm run()
      */
     public void run() {
-        System.out.println("Client " + fromIP + " is connecting.");
         try {
             //Lặp liên tục để nhận request từ phía Client
             while(true) {
@@ -38,14 +41,21 @@ public class ServerThread extends Thread{
                     // Server nhận dữ liệu từ client qua stream
                     String line;
                     line = receive();
-                    if (line.isEmpty()) continue;
+                    if (line.isEmpty()) {
+                        PublicKey serverPublicKey = Server.keyPair.getPublic();
+                        send(StringUtils.getStringFromKey(serverPublicKey));
+                        String encryptedSecretKey = receive();
+                        secretKey = RSA_Encryptor.decrypt(encryptedSecretKey, Server.keyPair.getPrivate());
+                        System.out.println("Client " + fromIP + " is connecting." + "- Key: " + secretKey);
+                        continue;
+                    }
                     if (line.equals(Server.BREAK_CONNECT_KEY))
                         break; //Vòng lặp sẽ ngừng khi Client gửi lệnh "bye"
                     System.out.println("Server get: " + line + " from " + fromIP);
 
                     //Xử lý dữ liệu bằng class ServerHandler method responseHandle
-                    ClientDataPacket packet = Server.requestHandle(line);
-                    line = Server.responseHandle(packet);
+                    ClientDataPacket packet = Server.requestHandle(line, secretKey);
+                    line = Server.responseHandle(packet, secretKey);
 
                     // Server gửi phản hồi ngược lại cho client (chuỗi đảo ngược)
                     send(line);

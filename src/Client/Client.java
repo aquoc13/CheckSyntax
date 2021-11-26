@@ -1,12 +1,16 @@
 package Client;
 
-import Security.Encoder;
+import Security.AES_Encryptor;
+import Security.ClientKeyGenerator;
+import Security.RSA_Encryptor;
 import Server.ServerDataPacket;
 
 import java.io.*;
 import java.net.Socket;
 
 public class Client {
+    public static String UID;
+    public static String secretKey;
     public static final int PORT = 5000;
     public static final String SERVER_IP = "localhost";
     public static final String[] supportedLanguage = new String[] { "java", "python3", "csharp", "cpp" };
@@ -22,6 +26,11 @@ public class Client {
         socket = new Socket(SERVER_IP, PORT);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        Client.send("");
+        String serverPublicKey = Client.receive();
+        secretKey = ClientKeyGenerator.create();
+        String encryptedKey = RSA_Encryptor.encrypt(secretKey, serverPublicKey);
+        Client.send(encryptedKey);
     }
 
     public static boolean checkConnection() {
@@ -54,7 +63,8 @@ public class Client {
      */
     public static String requestHandle(String language, String versionIndex, String stdin, String script) {
         ClientDataPacket clientPacket = new ClientDataPacket(language,versionIndex,stdin,script);
-        return Encoder.encode(clientPacket.pack());
+        System.out.println("Created client data packet:\n" + clientPacket.pack());
+        return AES_Encryptor.encrypt(clientPacket.pack(), secretKey);
     }
 
     /**
@@ -63,7 +73,6 @@ public class Client {
      * @return ServerDataPacket - Gói dữ liệu Server
      */
     public static ServerDataPacket responseHandle(String data) {
-        String decodedData = Encoder.decode(data);
-        return ServerDataPacket.unpack(decodedData);
+        return ServerDataPacket.unpack(AES_Encryptor.decrypt(data, secretKey));
     }
 }
