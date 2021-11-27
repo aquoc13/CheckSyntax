@@ -253,6 +253,7 @@ public class GUI extends MoveJFrame {
     }//GEN-LAST:event__btnFormatActionPerformed
 
     private void _btnUpFile1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnUpFile1ActionPerformed
+        this.setEnabled(false);
         DialogFile dialogFile = new DialogFile();
         dialogFile.setLocationRelativeTo(this);
         dialogFile.setVisible(true);
@@ -276,11 +277,10 @@ public class GUI extends MoveJFrame {
                         sourceCode.setText(code);
                         process.append("Import success.\n");
                     } else process.append("Import fail: File empty.\n");
-
-
                 }
             }
         });
+        this.setEnabled(true);
     }//GEN-LAST:event__btnUpFile1ActionPerformed
 
     private void _btnLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnLinkActionPerformed
