@@ -46,11 +46,9 @@ public class Server {
         ServerDataPacket serverPacket = new ServerDataPacket(
                 "Demo run - "
                         + dataPacket.getLanguage()
-                        + " version: "+ dataPacket.getVersionIndex()
-                        + " - input: "
-                        + dataPacket.getStdin(),
+                        + " version: "+ dataPacket.getVersionIndex(),
                 dataPacket.getScript(),
-                dataPacket.toString(),
+                dataPacket.getStdin(),
                 "000",
                 "000",
                 "0ms");
