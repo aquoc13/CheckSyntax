@@ -28,9 +28,14 @@ public class Client {
         out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         Client.send("");
         String serverPublicKey = Client.receive();
+        System.out.println("Public key from server: " + serverPublicKey);
         secretKey = ClientKeyGenerator.create();
+        System.out.println("ClientID: " + UID);
+        System.out.println("Create secret key: " + secretKey);
         String encryptedKey = RSA_Encryptor.encrypt(secretKey, serverPublicKey);
+        System.out.println("Encrypt secret key: " + encryptedKey);
         Client.send(encryptedKey);
+        System.out.println("Sent encrypted key to server.");
     }
 
     public static boolean checkConnection() {

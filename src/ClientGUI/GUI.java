@@ -4,6 +4,8 @@ import Client.Client;
 import Server.ServerDataPacket;
 import Services.FileHandler;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -125,6 +127,7 @@ public class GUI extends MoveJFrame {
         prettifyCode.setColumns(20);
         prettifyCode.setForeground(new java.awt.Color(255, 255, 255));
         prettifyCode.setRows(5);
+        prettifyCode.setEditable(false);
         jScrollPane1.setViewportView(prettifyCode);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(364, 244, 311, 299));
@@ -245,51 +248,57 @@ public class GUI extends MoveJFrame {
             process.append(Client.FAIL_CONNECT + "\n");
             process.append("Click Run to reconnect !\n");
         }
-        System.exit(0);
+        this.dispose();
     }//GEN-LAST:event_closeMouseClicked
 
     private void _btnFormatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnFormatActionPerformed
-        // TODO add your handling code here:
     }//GEN-LAST:event__btnFormatActionPerformed
 
     private void _btnUpFile1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnUpFile1ActionPerformed
-        this.setEnabled(false);
+        JFrame frame = this;
+        frame.setEnabled(false);
         DialogFile dialogFile = new DialogFile();
-        dialogFile.setLocationRelativeTo(this);
+        dialogFile.setLocationRelativeTo(frame);
         dialogFile.setVisible(true);
         dialogFile.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
-                if (DialogFile.isOK()) {
+                if (DialogFile.isOK() && !DialogFile.latestFile.isEmpty()) {
                     process.append("\n");
                     DialogFile.latestFile = checkNullExtension(DialogFile.latestFile);
                     process.append("Open: " + DialogFile.latestFile + "\n");
 
                     String fileType = FileHandler.getFileExtension(DialogFile.latestFile);
                     process.append("Type: " + fileType + "\n");
+
                     if (Arrays.asList(FileHandler.supportedExtension).contains(fileType)) {
                         int typeIndex = Arrays.asList(FileHandler.supportedExtension).indexOf(fileType);
                         selectedBox.setSelectedIndex(typeIndex);
-                        process.append("Selected language " + selectedBox.getSelectedItem() + "\n");
-                    } else process.append("File language isn't supported.\n");
+                        process.append("Selected language: " + selectedBox.getSelectedItem() + "\n");
+                    }
+                    else process.append("File language isn't supported.\n");
 
                     String code = FileHandler.read(DialogFile.latestFile);
                     if (code != null && !code.isEmpty()) {
                         sourceCode.setText(code);
                         process.append("Import success.\n");
-                    } else process.append("Import fail: File empty.\n");
+                    }
+                    else process.append("Import fail: File empty.\n");
                 }
+                frame.setEnabled(true);
+                frame.toFront();
             }
         });
-        this.setEnabled(true);
     }//GEN-LAST:event__btnUpFile1ActionPerformed
 
     private void _btnLinkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnLinkActionPerformed
+        JFrame frame = this;
+        frame.setEnabled(false);
         DialogLink dialogLink = new DialogLink();
-        dialogLink.setLocationRelativeTo(this);
+        dialogLink.setLocationRelativeTo(frame);
         dialogLink.setVisible(true);
         dialogLink.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
-                if (DialogLink.isOK()) {
+                if (DialogLink.isOK() && !DialogLink.latestURL.isEmpty()) {
                     process.append("\n");
                     String fileType = FileHandler.getFileExtension(DialogLink.latestURL);
                     process.append("Connect: " + DialogLink.latestURL + "\n");
@@ -297,26 +306,32 @@ public class GUI extends MoveJFrame {
                     if (Arrays.asList(FileHandler.supportedExtension).contains(fileType)) {
                         int typeIndex = Arrays.asList(FileHandler.supportedExtension).indexOf(fileType);
                         selectedBox.setSelectedIndex(typeIndex);
-                        process.append("Selected language " + selectedBox.getSelectedItem() + "\n");
-                    } else process.append("File language isn't supported." + "\n");
+                        process.append("Selected language: " + selectedBox.getSelectedItem() + "\n");
+                    }
+                    else process.append("File language isn't supported." + "\n");
 
                     String code = FileHandler.readURL(DialogLink.latestURL);
                     if (code != null && !code.isEmpty()) {
                         sourceCode.setText(code);
                         process.append("Import success." + "\n");
-                    } else process.append("Import fail: Web empty." + "\n");
+                    }
+                    else process.append("Import fail: Web empty." + "\n");
                 }
+                frame.setEnabled(true);
+                frame.toFront();
             }
         });
     }//GEN-LAST:event__btnLinkActionPerformed
 
     private void _btnDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnDownloadActionPerformed
+        JFrame frame = this;
+        frame.setEnabled(false);
         DialogFile dialogFile = new DialogFile();
-        dialogFile.setLocationRelativeTo(this);
+        dialogFile.setLocationRelativeTo(frame);
         dialogFile.setVisible(true);
         dialogFile.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
-                if (DialogFile.isOK()) {
+                if (DialogFile.isOK() && !DialogFile.latestFile.isEmpty()) {
                     process.append("\n");
                     DialogFile.latestFile = checkNullExtension(DialogFile.latestFile);
                     process.append("Open: " + DialogFile.latestFile + "\n");
@@ -325,11 +340,14 @@ public class GUI extends MoveJFrame {
                     FileHandler.write(DialogFile.latestFile, code);
                     process.append("Export success." + "\n");
                 }
+                frame.setEnabled(true);
+                frame.toFront();
             }
         });
     }//GEN-LAST:event__btnDownloadActionPerformed
 
     private void _btnRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnRunActionPerformed
+        this.setEnabled(false);
         try {
             int selectedIndex = selectedBox.getSelectedIndex();
             String language = Client.supportedLanguage[selectedIndex];
@@ -338,8 +356,9 @@ public class GUI extends MoveJFrame {
             String stdin = input.getText();
 
             String clientDataPacket = Client.requestHandle(language,versionIndex,stdin,script);
-            process.append("\nCollected user input.\n");
+            process.append("\n");
             Client.send(clientDataPacket);
+            process.append("Collected user input.\n");
             System.out.println("Sent packet: " + clientDataPacket + "\n");
             process.append("Sent request.\n");
 
@@ -349,7 +368,12 @@ public class GUI extends MoveJFrame {
             ServerDataPacket serverPacket = Client.responseHandle(response);
             process.append("Print result.\n");
             System.out.println("Result:\n" + serverPacket.pack());
-            compiler.append(serverPacket.pack());
+            prettifyCode.append(serverPacket.getFormat());
+            compiler.append("Description: " + serverPacket.getDescription() + "\n");
+            compiler.append("Output: " + serverPacket.getOutput() + "\n");
+            compiler.append("Status code: " + serverPacket.getStatusCode() + "\n");
+            compiler.append("Memory usage: " + serverPacket.getMemory() + "\n");
+            compiler.append("CPU time:" + serverPacket.getCpuTime() + "\n");
 
         } catch (IOException | NullPointerException e) {
             process.append("Lost connections, ");
@@ -358,10 +382,12 @@ public class GUI extends MoveJFrame {
             } catch (IOException f) {
                 process.append(Client.FAIL_CONNECT + "\n");
                 process.append("Try again !" + "\n");
+                this.setEnabled(true);
                 return;
             }
             process.append(Client.SUCCESS_CONNECT + "\n");
         }
+        this.setEnabled(true);
     }//GEN-LAST:event__btnRunActionPerformed
 
     /**
@@ -377,19 +403,6 @@ public class GUI extends MoveJFrame {
             return path + "." + selectedType;
         }
         return path;
-    }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new GUI().setVisible(true);
-                
-            }
-        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
