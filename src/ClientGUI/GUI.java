@@ -62,9 +62,10 @@ public class GUI extends MoveJFrame {
         jScrollPane5 = new javax.swing.JScrollPane();
         compiler = new javax.swing.JTextArea();
         jLabel5 = new javax.swing.JLabel();
+        _btnRestart = new javax.swing.JButton();
         background = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -78,14 +79,13 @@ public class GUI extends MoveJFrame {
         subTitle.setText("Java, Python, C# and C compiler, syntax checking tool. ");
         jPanel1.add(subTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, -1, -1));
 
-        close.setIcon(new javax.swing.ImageIcon("image/close.png")); // NOI18N
-        close.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        close.setIcon(new javax.swing.ImageIcon("image/close1.png")); // NOI18N
         close.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 closeMouseClicked(evt);
             }
         });
-        jPanel1.add(close, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 30, -1, -1));
+        jPanel1.add(close, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 20, -1, -1));
 
         _btnFormat.setBackground(new java.awt.Color(239, 94, 29));
         _btnFormat.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
@@ -98,7 +98,7 @@ public class GUI extends MoveJFrame {
                 _btnFormatActionPerformed(evt);
             }
         });
-        jPanel1.add(_btnFormat, new org.netbeans.lib.awtextra.AbsoluteConstraints(544, 196, 131, 42));
+        jPanel1.add(_btnFormat, new org.netbeans.lib.awtextra.AbsoluteConstraints(847, 184, 131, 42));
 
         selectedBox.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         selectedBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Java", "Python", "C#", "C++" }));
@@ -127,26 +127,28 @@ public class GUI extends MoveJFrame {
         prettifyCode.setColumns(20);
         prettifyCode.setForeground(new java.awt.Color(255, 255, 255));
         prettifyCode.setRows(5);
+        prettifyCode.setBorder(null);
         prettifyCode.setEditable(false);
         jScrollPane1.setViewportView(prettifyCode);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(364, 244, 311, 299));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(512, 244, 466, 299));
 
         sourceCode.setBackground(new java.awt.Color(61, 72, 96));
         sourceCode.setColumns(20);
         sourceCode.setForeground(new java.awt.Color(255, 255, 255));
         sourceCode.setRows(5);
+        sourceCode.setBorder(null);
         jScrollPane2.setViewportView(sourceCode);
 
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 244, 318, 299));
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 244, 466, 299));
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Prettifier Code");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(364, 210, -1, -1));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(512, 210, -1, -1));
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Input:");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 568, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 549, -1, -1));
 
         _btnLink.setBackground(new java.awt.Color(13, 21, 37));
         _btnLink.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
@@ -158,7 +160,7 @@ public class GUI extends MoveJFrame {
                 _btnLinkActionPerformed(evt);
             }
         });
-        jPanel1.add(_btnLink, new org.netbeans.lib.awtextra.AbsoluteConstraints(635, 555, 41, 40));
+        jPanel1.add(_btnLink, new org.netbeans.lib.awtextra.AbsoluteConstraints(937, 577, 41, 40));
 
         _btnDownload.setBackground(new java.awt.Color(13, 21, 37));
         _btnDownload.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
@@ -170,7 +172,7 @@ public class GUI extends MoveJFrame {
                 _btnDownloadActionPerformed(evt);
             }
         });
-        jPanel1.add(_btnDownload, new org.netbeans.lib.awtextra.AbsoluteConstraints(588, 555, 41, 40));
+        jPanel1.add(_btnDownload, new org.netbeans.lib.awtextra.AbsoluteConstraints(884, 577, 41, 40));
 
         _btnRun.setBackground(new java.awt.Color(4, 74, 21));
         _btnRun.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
@@ -183,7 +185,7 @@ public class GUI extends MoveJFrame {
                 _btnRunActionPerformed(evt);
             }
         });
-        jPanel1.add(_btnRun, new org.netbeans.lib.awtextra.AbsoluteConstraints(484, 555, 98, 40));
+        jPanel1.add(_btnRun, new org.netbeans.lib.awtextra.AbsoluteConstraints(721, 577, 98, 40));
 
         input.setBackground(new java.awt.Color(45, 55, 74));
         input.setColumns(20);
@@ -191,22 +193,20 @@ public class GUI extends MoveJFrame {
         input.setRows(5);
         jScrollPane3.setViewportView(input);
 
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(26, 601, 650, -1));
+        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 577, 650, -1));
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Compiler");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 700, -1, -1));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 673, -1, -1));
 
         process.setBackground(new java.awt.Color(27, 35, 51));
         process.setColumns(20);
         process.setForeground(new java.awt.Color(255, 255, 255));
         process.setRows(5);
         process.setEditable(false);
-        process.setLineWrap(true);
-        process.setWrapStyleWord(true);
         jScrollPane4.setViewportView(process);
 
-        jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(431, 719, -1, 160));
+        jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(696, 695, 282, 178));
 
         compiler.setBackground(new java.awt.Color(27, 35, 51));
         compiler.setColumns(20);
@@ -215,24 +215,36 @@ public class GUI extends MoveJFrame {
         compiler.setEditable(false);
         jScrollPane5.setViewportView(compiler);
 
-        jPanel1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 719, 385, 160));
+        jPanel1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 695, 650, 178));
 
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Process");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(431, 697, -1, -1));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(696, 673, -1, -1));
+
+        _btnRestart.setBackground(new java.awt.Color(13, 21, 37));
+        _btnRestart.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
+        _btnRestart.setForeground(new java.awt.Color(255, 255, 255));
+        _btnRestart.setIcon(new javax.swing.ImageIcon("image/restart_alt.png")); // NOI18N
+        _btnRestart.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        _btnRestart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnRestartActionPerformed(evt);
+            }
+        });
+        jPanel1.add(_btnRestart, new org.netbeans.lib.awtextra.AbsoluteConstraints(831, 577, 41, 40));
 
         background.setIcon(new javax.swing.ImageIcon("image/background.png")); // NOI18N
-        jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(5, 6, 690, 900));
+        jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -346,6 +358,10 @@ public class GUI extends MoveJFrame {
         });
     }//GEN-LAST:event__btnDownloadActionPerformed
 
+    private void _btnRestartActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+    }
+
     private void _btnRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnRunActionPerformed
         this.setEnabled(false);
         try {
@@ -409,6 +425,7 @@ public class GUI extends MoveJFrame {
     private javax.swing.JButton _btnDownload;
     private javax.swing.JButton _btnFormat;
     private javax.swing.JButton _btnLink;
+    private javax.swing.JButton _btnRestart;
     private javax.swing.JButton _btnRun;
     private javax.swing.JButton _btnUpFile1;
     private javax.swing.JLabel background;
@@ -432,5 +449,6 @@ public class GUI extends MoveJFrame {
     private javax.swing.JTextArea sourceCode;
     private javax.swing.JLabel subTitle;
     private javax.swing.JLabel title;
+    // End of variables declaration
     // End of variables declaration//GEN-END:variables
 }
