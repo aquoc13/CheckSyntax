@@ -5,7 +5,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Scanner;
+import static Services.StringUtils.convertEscapeCharacters;
 
 public class Compiler {
     private HttpURLConnection JdoodleConnection;
@@ -14,14 +14,14 @@ public class Compiler {
     /**
      *
      * @param stdin Truyền sẵn dữ liệu đầu vào
-     * @param language Truyền đúng cú pháp: java, python3, cpp, csharp
+     * @param language Truyền đúng cú pháp: java, python3, cpp, php, c
      */
     public Compiler (String script, String stdin, String language) {
         //API: https://docs.jdoodle.com/compiler-api/compiler-api
         String clientId = "b7cb71dbe4ef25ec3b8e781a2367cedc"; //Đăng nhập rồi lấy ở https://www.jdoodle.com/compiler-api/
         String clientSecret = "35a35275aa57b7c59f8cf99bb728a31de0ab4a5e8dea72b8f3d6f0dafb9b4014"; //Đăng nhập rồi lấy ở https://www.jdoodle.com/compiler-api/
         String versionIndex = getVersionIndex(language);
-        script = addEscapeCharacters(script, language);
+        script = convertEscapeCharacters(script, language);
 
         try {
             URL url = new URL("https://api.jdoodle.com/v1/execute");
@@ -90,18 +90,6 @@ public class Compiler {
     }
     public String getStatusCode() { return statusCode; }
 
-    private String addEscapeCharacters (String script, String language) {
-        script = script
-                .replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\t", "\\t");
-        if (!language.equals("php"))
-            script = script.replace("\'", "\\\'");
-
-        return script;
-    }
-
     private String getVersionIndex (String language) {
         switch (language) {
             case "java":
@@ -109,6 +97,7 @@ public class Compiler {
             case "php":
                 return "3";
             case "c":
+            case "cpp":
                 return "4";
             default:
                 return "0";
