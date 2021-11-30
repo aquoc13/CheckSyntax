@@ -25,7 +25,7 @@ public class FileHandler {
             File file = fileChooser.getSelectedFile(); //lấy file đã chọn
             return file.getAbsolutePath(); //lầy đường dẫn path từ file
         }
-        return null;
+        return "";
     }
 
     /**
@@ -47,7 +47,7 @@ public class FileHandler {
             fileInputStream.close();
             return builder.toString();
         } catch (IOException ignored) {
-            return null; //trả về chuỗi null nếu không thể đọc file
+            return ""; //trả về chuỗi null nếu không thể đọc file
         }
     }
 
@@ -65,12 +65,12 @@ public class FileHandler {
             StringBuilder builder = new StringBuilder();
             String inputLine;
             while ((inputLine = in.readLine()) != null)
-                builder.append(inputLine).append("\n");;
+                builder.append(inputLine).append("\n");
 
             in.close();
             return builder.toString();
         } catch (IOException ignored) {
-            return null; //trả về chuỗi null nếu không tải dữ liệu từ web
+            return ""; //trả về chuỗi null nếu không tải dữ liệu từ web
         }
     }
 
@@ -113,6 +113,6 @@ public class FileHandler {
             //Cắt chuỗi string từ dấu chấm "." cuối cùng tới hết.
             return path.substring(lastDot_Index + 1);
         }
-        return null;
+        return "";
     }
 }
