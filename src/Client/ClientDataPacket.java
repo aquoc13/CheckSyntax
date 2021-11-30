@@ -1,6 +1,5 @@
 package Client;
 
-import Server.ServerDataPacket;
 import com.google.gson.*;
 
 public class ClientDataPacket {

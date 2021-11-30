@@ -1,10 +1,9 @@
 package ClientGUI;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 
 /**
  *
@@ -12,6 +11,7 @@ import java.io.IOException;
  */
 class MoveJFrame extends JFrame {
     public MoveJFrame() {
+        setIconImage(new ImageIcon("image/icon.png").getImage());
         this.setUndecorated(true);
 
         FrameDragListener frameDragListener = new FrameDragListener(this);

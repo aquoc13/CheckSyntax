@@ -19,6 +19,7 @@ public class DialogLink extends MoveJFrame {
     /** Creates new form DialogLink */
     public DialogLink() {
         initComponents();
+        setTitle("Search link - CheckSyntax");
     }
 
     public static boolean isOK() {

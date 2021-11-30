@@ -2,44 +2,122 @@ package Client;
 
 import Security.AES_Encryptor;
 import Security.ClientKeyGenerator;
-import Security.RSA_Encryptor;
 import Server.ServerDataPacket;
+import Services.FileHandler;
+import Services.StringUtils;
+import org.openeuler.com.sun.net.ssl.internal.ssl.Provider;
 
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
 import java.net.Socket;
+import java.security.Security;
+import java.time.LocalDateTime;
+import java.util.StringTokenizer;
 
 public class Client {
     public static String UID;
     public static String secretKey;
-    public static final int PORT = 5000;
+    private static Socket socket;
+    private static BufferedReader in;
+    private static BufferedWriter out;
+    private static SSLSocket sslSocket;
+    private static SSLSocketFactory sslsocketfactory;
+    private static DataOutputStream outSSL;
+
+    public static final int MAIN_PORT = 5000;
+    public static final int VERIFY_PORT = 5005;
     public static final String SERVER_IP = "localhost";
+    public static final String TRUST_STORE_NAME = "myTrustStore.jts";
+    public static final String FILE_CONFIG_NAME = "config";
+    public static final String CLIENT_SIDE_PATH = "workspace/Client.Side/";
+    public static final String TRUST_STORE_PASSWORD = "checksyntax";
+    public static final boolean SSL_DEBUG_ENABLE = false;
     public static final String[] supportedLanguage = new String[] { "java", "python3", "csharp", "cpp" };
     public static final String versionIndex = "3";
     public static final String BREAK_CONNECT_KEY = "bye";
     public static final String SUCCESS_CONNECT = "Connected.";
     public static final String FAIL_CONNECT = "Server closed.";
-    private static Socket socket = null;
-    private static BufferedReader in;
-    private static BufferedWriter out;
+
+    public static void config() {
+        try {
+            String config = FileHandler.read(CLIENT_SIDE_PATH + FILE_CONFIG_NAME);
+            StringTokenizer tokenizer = new StringTokenizer(config,"|",false);
+            UID = tokenizer.nextToken();
+            secretKey = tokenizer.nextToken();
+            String hash = tokenizer.nextToken();
+            if (!StringUtils.applySha256(UID,secretKey).equals(hash))
+                throw new Exception();
+            System.out.println("ClientID: " + UID);
+            System.out.println("Secret key: " + secretKey);
+        } catch (Exception ignored) {
+            UID = "new";
+            secretKey = "new";
+        }
+    }
+
+    public static void create() {
+        secretKey = ClientKeyGenerator.create();
+        String hash = StringUtils.applySha256(UID,secretKey);
+        String config = UID + "|" + secretKey  + "|" + hash + "|" + LocalDateTime.now();
+        FileHandler.write(CLIENT_SIDE_PATH + FILE_CONFIG_NAME, config);
+        System.out.println("new ClientID: " + UID);
+        System.out.println("new Secret key: " + secretKey);
+    }
+
+    private static void addProvider(String trustStore, String password) {
+        /*Adding the JSSE (Java Secure Socket Extension) provider which provides SSL and TLS protocols
+        and includes functionality for data encryption, server authentication, message integrity,
+        and optional client authentication.*/
+        Security.addProvider(new Provider());
+        //specifing the trustStore file which contains the certificate & public of the server
+        System.setProperty("javax.net.ssl.trustStore", trustStore);
+        //specifing the password of the trustStore file
+        System.setProperty("javax.net.ssl.trustStorePassword", password);
+        //This optional and it is just to show the dump of the details of the handshake process
+        if (SSL_DEBUG_ENABLE)
+            System.setProperty("javax.net.debug","all");
+    }
 
     public static void connectServer() throws IOException {
-        socket = new Socket(SERVER_IP, PORT);
+        socket = new Socket(SERVER_IP, MAIN_PORT);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-        Client.send("");
-        String serverPublicKey = Client.receive();
-        System.out.println("Public key from server: " + serverPublicKey);
-        secretKey = ClientKeyGenerator.create();
-        System.out.println("ClientID: " + UID);
-        System.out.println("Create secret key: " + secretKey);
-        String encryptedKey = RSA_Encryptor.encrypt(secretKey, serverPublicKey);
-        System.out.println("Encrypt secret key: " + encryptedKey);
-        Client.send(encryptedKey);
-        System.out.println("Sent encrypted key to server.");
+
+        boolean isVerified = false;
+        boolean isRegister = false;
+        do {
+            send(UID);
+            String verify = receive();
+            if (verify.equals("UIDVerified")) {
+                System.out.println(verify + ": " + UID + " - Key: " + secretKey);
+                isVerified = true;
+            }
+            else if (verify.equals("UIDExpired") && !isRegister) {
+                if (!UID.equals("new"))
+                    System.out.println(verify + ": " + UID + " - Key: " + secretKey);
+
+                addProvider(CLIENT_SIDE_PATH + TRUST_STORE_NAME, TRUST_STORE_PASSWORD);
+                //SSLSSocketFactory establishes the ssl context and creates SSLSocket
+                sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+                //Create SSLSocket using SSLServerFactory already established ssl context and connect to server
+                sslSocket = (SSLSocket) sslsocketfactory.createSocket(SERVER_IP, VERIFY_PORT);
+                outSSL = new DataOutputStream(sslSocket.getOutputStream());
+
+                create();
+                verify();
+                isRegister = true;
+                System.out.println("Sent " + UID + "|" + secretKey + " to server.");
+            }
+        } while (!isVerified);
     }
 
     public static boolean checkConnection() {
         return socket != null;
+    }
+
+    private static void verify() throws IOException {
+        outSSL.writeUTF(UID + "|" + secretKey);
     }
 
     public static void send(String data) throws IOException {
@@ -53,6 +131,7 @@ public class Client {
     }
 
     public static void close() throws IOException {
+        FileHandler.write(CLIENT_SIDE_PATH + FILE_CONFIG_NAME, "");
         in.close();
         out.close();
         socket.close();

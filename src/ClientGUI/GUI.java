@@ -18,8 +18,9 @@ public class GUI extends MoveJFrame {
      */
     public GUI() {
         initComponents();
-        this.setLocationRelativeTo(null);
-        this.setEnabled(false);
+        setTitle("CheckSyntax");
+        setLocationRelativeTo(null);
+        setEnabled(false);
     }
     
     static boolean maximized = true;
@@ -76,10 +77,11 @@ public class GUI extends MoveJFrame {
 
         subTitle.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         subTitle.setForeground(new java.awt.Color(189, 189, 189));
-        subTitle.setText("Java, Python, C# and C compiler, syntax checking tool. ");
+        subTitle.setText("Java, Python, C# and C++ compiler, syntax checking tool. ");
         jPanel1.add(subTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, -1, -1));
 
         close.setIcon(new javax.swing.ImageIcon("image/close1.png")); // NOI18N
+        close.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         close.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 closeMouseClicked(evt);
@@ -93,6 +95,7 @@ public class GUI extends MoveJFrame {
         _btnFormat.setIcon(new javax.swing.ImageIcon("image/format_paint.png")); // NOI18N
         _btnFormat.setText("format");
         _btnFormat.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        _btnFormat.setFocusPainted(false);
         _btnFormat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _btnFormatActionPerformed(evt);
@@ -112,6 +115,7 @@ public class GUI extends MoveJFrame {
         _btnUpFile1.setIcon(new javax.swing.ImageIcon("image/cloud_upload.png")); // NOI18N
         _btnUpFile1.setText("Upload your file");
         _btnUpFile1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        _btnUpFile1.setFocusPainted(false);
         _btnUpFile1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _btnUpFile1ActionPerformed(evt);
@@ -121,7 +125,7 @@ public class GUI extends MoveJFrame {
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Source code:");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, -1, 28));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 205, -1, 28));
 
         prettifyCode.setBackground(new java.awt.Color(61, 72, 96));
         prettifyCode.setColumns(20);
@@ -129,6 +133,7 @@ public class GUI extends MoveJFrame {
         prettifyCode.setRows(5);
         prettifyCode.setBorder(null);
         prettifyCode.setEditable(false);
+        prettifyCode.setFont(new Font("Roboto", Font.PLAIN, 16));
         jScrollPane1.setViewportView(prettifyCode);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(512, 244, 466, 299));
@@ -138,6 +143,8 @@ public class GUI extends MoveJFrame {
         sourceCode.setForeground(new java.awt.Color(255, 255, 255));
         sourceCode.setRows(5);
         sourceCode.setBorder(null);
+        sourceCode.setCaretColor(Color.white);
+        sourceCode.setFont(new Font("Roboto", Font.PLAIN, 16));
         jScrollPane2.setViewportView(sourceCode);
 
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 244, 466, 299));
@@ -155,6 +162,7 @@ public class GUI extends MoveJFrame {
         _btnLink.setForeground(new java.awt.Color(255, 255, 255));
         _btnLink.setIcon(new javax.swing.ImageIcon("image/link.png")); // NOI18N
         _btnLink.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        _btnLink.setFocusPainted(false);
         _btnLink.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _btnLinkActionPerformed(evt);
@@ -167,6 +175,7 @@ public class GUI extends MoveJFrame {
         _btnDownload.setForeground(new java.awt.Color(255, 255, 255));
         _btnDownload.setIcon(new javax.swing.ImageIcon("image/save_alt.png")); // NOI18N
         _btnDownload.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        _btnDownload.setFocusPainted(false);
         _btnDownload.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _btnDownloadActionPerformed(evt);
@@ -180,6 +189,7 @@ public class GUI extends MoveJFrame {
         _btnRun.setIcon(new javax.swing.ImageIcon("image/run.png")); // NOI18N
         _btnRun.setText("RUN");
         _btnRun.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        _btnRun.setFocusPainted(false);
         _btnRun.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _btnRunActionPerformed(evt);
@@ -191,6 +201,8 @@ public class GUI extends MoveJFrame {
         input.setColumns(20);
         input.setForeground(new java.awt.Color(255, 255, 255));
         input.setRows(5);
+        input.setCaretColor(Color.white);
+        input.setFont(new Font("Roboto", Font.PLAIN, 16));
         jScrollPane3.setViewportView(input);
 
         jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 577, 650, -1));
@@ -204,6 +216,7 @@ public class GUI extends MoveJFrame {
         process.setForeground(new java.awt.Color(255, 255, 255));
         process.setRows(5);
         process.setEditable(false);
+        process.setFont(new Font("Roboto", Font.PLAIN, 16));
         jScrollPane4.setViewportView(process);
 
         jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(696, 695, 282, 178));
@@ -213,6 +226,7 @@ public class GUI extends MoveJFrame {
         compiler.setForeground(new java.awt.Color(255, 255, 255));
         compiler.setRows(5);
         compiler.setEditable(false);
+        compiler.setFont(new Font("Roboto", Font.PLAIN, 16));
         jScrollPane5.setViewportView(compiler);
 
         jPanel1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 695, 650, 178));
@@ -226,6 +240,7 @@ public class GUI extends MoveJFrame {
         _btnRestart.setForeground(new java.awt.Color(255, 255, 255));
         _btnRestart.setIcon(new javax.swing.ImageIcon("image/restart_alt.png")); // NOI18N
         _btnRestart.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        _btnRestart.setFocusPainted(false);
         _btnRestart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 _btnRestartActionPerformed(evt);
@@ -269,10 +284,10 @@ public class GUI extends MoveJFrame {
     private void _btnUpFile1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnUpFile1ActionPerformed
         JFrame frame = this;
         frame.setEnabled(false);
-        DialogFile dialogFile = new DialogFile();
-        dialogFile.setLocationRelativeTo(frame);
-        dialogFile.setVisible(true);
-        dialogFile.addWindowListener(new WindowAdapter() {
+        DialogFile dialogUpFile = new DialogFile();
+        dialogUpFile.setLocationRelativeTo(frame);
+        dialogUpFile.setVisible(true);
+        dialogUpFile.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
                 if (DialogFile.isOK() && !DialogFile.latestFile.isEmpty()) {
                     process.append("\n");
@@ -338,10 +353,10 @@ public class GUI extends MoveJFrame {
     private void _btnDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnDownloadActionPerformed
         JFrame frame = this;
         frame.setEnabled(false);
-        DialogFile dialogFile = new DialogFile();
-        dialogFile.setLocationRelativeTo(frame);
-        dialogFile.setVisible(true);
-        dialogFile.addWindowListener(new WindowAdapter() {
+        DialogFile dialogSaveFile = new DialogFile();
+        dialogSaveFile.setLocationRelativeTo(frame);
+        dialogSaveFile.setVisible(true);
+        dialogSaveFile.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
                 if (DialogFile.isOK() && !DialogFile.latestFile.isEmpty()) {
                     process.append("\n");
@@ -359,7 +374,11 @@ public class GUI extends MoveJFrame {
     }//GEN-LAST:event__btnDownloadActionPerformed
 
     private void _btnRestartActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        sourceCode.setText("");
+        prettifyCode.setText("");
+        input.setText("");
+        compiler.setText("");
+        process.append("\nReset.\n");
     }
 
     private void _btnRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnRunActionPerformed
@@ -392,7 +411,7 @@ public class GUI extends MoveJFrame {
             compiler.append("CPU time:" + serverPacket.getCpuTime() + "\n");
 
         } catch (IOException | NullPointerException e) {
-            process.append("Lost connections, ");
+            //process.append("Lost connections, try to reconnect. \n");
             try {
                 Client.connectServer();
             } catch (IOException f) {
