@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class StringUtils {
@@ -61,5 +63,22 @@ public class StringUtils {
             script = script.replace("\'", "\\\'");
 
         return script;
+    }
+  
+    public static String applySha256(String password, String passwordSalt) {
+        String hashString;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(passwordSalt.getBytes());
+            byte[] bytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte aByte : bytes)
+                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
+            hashString = sb.toString();
+        }
+        catch (NoSuchAlgorithmException ignored) {
+            return "";
+        }
+        return hashString;
     }
 }
