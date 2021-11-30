@@ -4,8 +4,6 @@ import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.security.Key;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class StringUtils {
@@ -49,20 +47,19 @@ public class StringUtils {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
-    public static String applySha256(String password, String passwordSalt) {
-        String hashString;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(passwordSalt.getBytes());
-            byte[] bytes = md.digest(password.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for (byte aByte : bytes)
-                sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
-            hashString = sb.toString();
-        }
-        catch (NoSuchAlgorithmException ignored) {
-            return "";
-        }
-        return hashString;
+    /**
+     *
+     * @return Chuỗi đã format phù hợp để đẩy lên api
+     */
+    public static String convertEscapeCharacters(String script, String language) {
+        script = script
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\t", "\\t");
+        if (!language.equals("php")) //php thì k cần chuyển char[']
+            script = script.replace("\'", "\\\'");
+
+        return script;
     }
 }
