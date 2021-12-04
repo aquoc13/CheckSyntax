@@ -37,6 +37,7 @@ public class GUI extends MoveJFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+
         jPanel1 = new javax.swing.JPanel();
         title = new javax.swing.JLabel();
         subTitle = new javax.swing.JLabel();
