@@ -225,7 +225,7 @@ public class GUI extends MoveJFrame {
         compiler.setForeground(new java.awt.Color(255, 255, 255));
         compiler.setRows(5);
         compiler.setEditable(false);
-        compiler.setFont(new Font("Roboto", Font.PLAIN, 16));
+        compiler.setFont(new Font("new courier", 0, 16));
         jScrollPane5.setViewportView(compiler);
 
         jPanel1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 695, 650, 178));

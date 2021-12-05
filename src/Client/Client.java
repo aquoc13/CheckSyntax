@@ -200,7 +200,6 @@ public class Client {
      * @return String - dữ liệu đã qua xử lý và mã hóa
      */
     public static String requestHandle(String description, String language, String stdin, String script) {
-        stdin = stdin.replaceAll(" ","");
         ClientDataPacket clientPacket = new ClientDataPacket(description, language,stdin,script);
         System.out.println("Created client data packet:\n" + clientPacket.pack());
         return AES_Encryptor.encrypt(clientPacket.pack(), secretKey); //mã hóa bằng secret key trước khi gửi
