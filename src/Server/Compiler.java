@@ -12,7 +12,6 @@ public class Compiler {
     private String request, console, statusCode, memory, cpuTime;
 
     /**
-     *
      * @param stdin Truyền sẵn dữ liệu đầu vào
      * @param language Truyền đúng cú pháp: java, python3, cpp, php, c
      */
@@ -22,6 +21,7 @@ public class Compiler {
         String clientSecret = "99d6af4497da794a0e1e1fe5dd45e9cedb80487feb9da835c5e6153c9d9463a5"; //Đăng nhập rồi lấy ở https://www.jdoodle.com/compiler-api/
         String versionIndex = getVersionIndex(language);
         script = convertEscapeCharacters(script, language);
+        stdin = convertEscapeCharacters(stdin, language);
 
         try {
             URL url = new URL("https://api.jdoodle.com/v1/execute");
@@ -40,11 +40,11 @@ public class Compiler {
     }
 
     /**
-     *
      * @return Console
      * @throws IOException Kết nối API thất bại
+     * @throws RuntimeException clientSecret hết hạn hoặc quá số lần gọi API trong ngày
      */
-    public String compile() throws IOException{
+    public String compile() throws IOException, RuntimeException{
         OutputStream outputStream = JdoodleConnection.getOutputStream();
         outputStream.write(request.getBytes());
         outputStream.flush();
@@ -72,15 +72,13 @@ public class Compiler {
     }
 
     /**
-     *
-     * @return sec
+     * @return second
      */
     public String getCpuTime() {
         return cpuTime;
     }
 
     /**
-     *
      * @return kilobyte
      */
     public String getMemory() {
