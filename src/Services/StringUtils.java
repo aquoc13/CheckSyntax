@@ -45,12 +45,28 @@ public class StringUtils {
         clipboard.setContents(stringSelection, null);
     }
 
+    /**
+     * Chuyển Key sang String
+     */
     public static String getStringFromKey(Key key) {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
     /**
-     *
+     * Chuyển Byte[] sang String
+     */
+    public static String getStringFromBytes(byte[] bytes) {
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    /**
+     * Chuyển String sang Byte[]
+     */
+    public static byte[] getBytesFromString(String str) {
+        return Base64.getDecoder().decode(str);
+    }
+    /**
+     * Format chuỗi code trước khi đẩy api đưa theo ngôn ngữ
      * @return Chuỗi đã format phù hợp để đẩy lên api
      */
     public static String convertEscapeCharacters(String script, String language) {
@@ -64,13 +80,16 @@ public class StringUtils {
 
         return script;
     }
-  
-    public static String applySha256(String password, String passwordSalt) {
+
+    /**
+     * Hàm băm chuỗi
+     */
+    public static String applySha256(String str, String strSalt) {
         String hashString;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(passwordSalt.getBytes());
-            byte[] bytes = md.digest(password.getBytes());
+            md.update(strSalt.getBytes());
+            byte[] bytes = md.digest(str.getBytes());
             StringBuilder sb = new StringBuilder();
             for (byte aByte : bytes)
                 sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));

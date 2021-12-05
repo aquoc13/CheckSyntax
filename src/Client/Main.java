@@ -7,32 +7,27 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
-        //System.err.close();
-        GUI clientFrame = new GUI();
+        System.err.close();
+
+        //Khởi tạo giao diện
+        Client.Frame = new GUI();
         try {
             UIManager.setLookAndFeel("Window");
         } catch (Exception ignored) {}
+        java.awt.EventQueue.invokeLater(() -> Client.Frame.setVisible(true));
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                clientFrame.setVisible(true);
-            }
-        });
-
+        //Cấu trúc Client và kết nối tới Server
         try {
-            Client.config();
             Client.connectServer();
-        } catch (IOException e) {
-            clientFrame.appendProcess(Client.FAIL_CONNECT);
-            clientFrame.appendProcess("Click RUN to reconnect !");
-            clientFrame.setEnabled(true);
+        } catch (IOException e) { //Nếu kết nói thất bại
+            Client.Frame.appendProcess(Client.FAIL_CONNECT);
+            Client.Frame.appendProcess("Click RUN to reconnect !");
+            Client.Frame.setEnabled(true);
         }
 
         if (Client.checkConnection()) {
-            clientFrame.appendProcess(Client.SUCCESS_CONNECT);
-            clientFrame.setEnabled(true);
+            Client.Frame.appendProcess(Client.SUCCESS_CONNECT);
+            Client.Frame.setEnabled(true);
         }
-
     }
 }

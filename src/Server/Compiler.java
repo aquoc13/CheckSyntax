@@ -18,8 +18,8 @@ public class Compiler {
      */
     public Compiler (String script, String stdin, String language) {
         //API: https://docs.jdoodle.com/compiler-api/compiler-api
-        String clientId = "b7cb71dbe4ef25ec3b8e781a2367cedc"; //Đăng nhập rồi lấy ở https://www.jdoodle.com/compiler-api/
-        String clientSecret = "35a35275aa57b7c59f8cf99bb728a31de0ab4a5e8dea72b8f3d6f0dafb9b4014"; //Đăng nhập rồi lấy ở https://www.jdoodle.com/compiler-api/
+        String clientId = "e1dc961e8571a5bd10efc68f1fa66d48"; //Đăng nhập rồi lấy ở https://www.jdoodle.com/compiler-api/
+        String clientSecret = "99d6af4497da794a0e1e1fe5dd45e9cedb80487feb9da835c5e6153c9d9463a5"; //Đăng nhập rồi lấy ở https://www.jdoodle.com/compiler-api/
         String versionIndex = getVersionIndex(language);
         script = convertEscapeCharacters(script, language);
 
@@ -36,10 +36,7 @@ public class Compiler {
                     + "\",\"stdin\":\"" + stdin
                     + "\",\"language\":\"" + language
                     + "\",\"versionIndex\":\"" + versionIndex + "\"} ";
-            System.out.println(request);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
     }
 
     /**
@@ -68,7 +65,7 @@ public class Compiler {
                 memory = jsonObject.get("memory").toString();
                 cpuTime = jsonObject.get("cpuTime").toString();
             }
-        } catch (JSONException e) {}
+        } catch (JSONException ignored) {}
 
         JdoodleConnection.disconnect();
         return console;
@@ -81,6 +78,7 @@ public class Compiler {
     public String getCpuTime() {
         return cpuTime;
     }
+
     /**
      *
      * @return kilobyte
@@ -88,7 +86,10 @@ public class Compiler {
     public String getMemory() {
         return memory;
     }
-    public String getStatusCode() { return statusCode; }
+
+    public String getStatusCode() {
+        return statusCode;
+    }
 
     private String getVersionIndex (String language) {
         switch (language) {

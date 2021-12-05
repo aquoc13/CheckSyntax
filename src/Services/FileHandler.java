@@ -1,14 +1,17 @@
 package Services;
 
+import Client.Client;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class FileHandler {
-    public static final String[] supportedExtension = new String[] { "java", "py", "cs", "cpp" };
+    public static final String[] supportedExtension = new String[] { "java", "py", "php","c", "cpp", "jpg" };
     /**
      * Mở Dialog để người dùng chọn file muốn thao tác
      * @param frame truyền vào JFrame là parent cho dialog
@@ -16,8 +19,8 @@ public class FileHandler {
      */
     public static String fileChooser(JFrame frame) {
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
-                                    "Generic Files (.java, .cs, .cpp, .py)", //mô tả các loại file được phép
-                                    "java", "cs", "cpp", "py"); //khai báo các loại file được phép
+                                    "Generic Files (.java, .py, .php, .c, .cpp, .jpg)", //mô tả các loại file được phép
+                                    supportedExtension); //khai báo các loại file được phép
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(filter);
 
@@ -114,5 +117,30 @@ public class FileHandler {
             return path.substring(lastDot_Index + 1);
         }
         return "";
+    }
+
+    /**
+     * Kiếm tra path có đuôi file không nếu không tự thêm đuôi định dạng vào dựa theo ngôn ngữ đang chọn
+     * @param path đường dẫn file.
+     * @return path sau khi xử lý.
+     */
+    public static String checkNullExtension(String path) {
+        String fileType = FileHandler.getFileExtension(path);
+        if (fileType.isEmpty()) {
+            int selectedIndex = Client.Frame.selectedBox.getSelectedIndex();
+            String selectedType = Arrays.asList(FileHandler.supportedExtension).get(selectedIndex);
+            return path + "." + selectedType;
+        }
+        return path;
+    }
+
+    /**
+     * Kiểm tra chuỗi path là đường dẫn thư mục file hay url website
+     * @param path đường dẫn file
+     * @return True nếu là url, False nếu đường dẫn file
+     */
+    public static boolean isWebURL(String path) {
+        String lowerCase = path.trim().toLowerCase();
+        return lowerCase.startsWith("http://") || lowerCase.startsWith("https://");
     }
 }

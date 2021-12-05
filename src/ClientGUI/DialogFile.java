@@ -109,21 +109,21 @@ public class DialogFile extends MoveJFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void _btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnCancelActionPerformed
+    private void _btnCancelActionPerformed(java.awt.event.ActionEvent evt) {
         isOK = false;
         this.dispose();
-    }//GEN-LAST:event__btnCancelActionPerformed
+    }
 
-    private void _btnOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnOKActionPerformed
+    private void _btnOKActionPerformed(java.awt.event.ActionEvent evt) {
         latestFile = input.getText();
         isOK = true;
         this.dispose();
-    }//GEN-LAST:event__btnOKActionPerformed
+    }
 
-    private void _btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnOpenFile
+    private void _btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {
         String path = FileHandler.fileChooser(this);
         input.setText(path);
-    }//GEN-LAST:event__btnOpenFile
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnCancel;
