@@ -4,13 +4,18 @@ import Client.Client;
 import Services.FileHandler;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Arrays;
 
 public class GUI extends MoveJFrame {
+    private static final String CodeHolder = "Enter your source code here.";
+    private static final String InputHolder = "Enter your input here.";
 
     /**
      * Creates new form GUI
@@ -20,6 +25,7 @@ public class GUI extends MoveJFrame {
         setTitle("CheckSyntax");
         setLocationRelativeTo(null);
         setEnabled(false);
+        setFocusable(true);
     }
     
     static boolean maximized = true;
@@ -66,7 +72,6 @@ public class GUI extends MoveJFrame {
         background = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         title.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
@@ -92,7 +97,7 @@ public class GUI extends MoveJFrame {
         _btnFormat.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         _btnFormat.setForeground(new java.awt.Color(255, 255, 255));
         _btnFormat.setIcon(new javax.swing.ImageIcon("image/format_paint.png")); // NOI18N
-        _btnFormat.setText("format");
+        _btnFormat.setText("FORMAT");
         _btnFormat.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         _btnFormat.setFocusPainted(false);
         _btnFormat.addActionListener(new java.awt.event.ActionListener() {
@@ -133,17 +138,39 @@ public class GUI extends MoveJFrame {
         prettifyCode.setBorder(null);
         prettifyCode.setEditable(false);
         prettifyCode.setFont(new Font("Roboto", Font.PLAIN, 16));
+        prettifyCode.setTabSize(2);
+        prettifyCode.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         jScrollPane1.setViewportView(prettifyCode);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(512, 244, 466, 299));
 
         sourceCode.setBackground(new java.awt.Color(61, 72, 96));
         sourceCode.setColumns(20);
-        sourceCode.setForeground(new java.awt.Color(255, 255, 255));
+        sourceCode.setForeground(new Color(182, 182, 182));
         sourceCode.setRows(5);
         sourceCode.setBorder(null);
         sourceCode.setCaretColor(Color.white);
         sourceCode.setFont(new Font("Roboto", Font.PLAIN, 16));
+        sourceCode.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        sourceCode.setTabSize(2);
+        sourceCode.setText(CodeHolder);
+        sourceCode.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(sourceCode.getText().equalsIgnoreCase(CodeHolder)){
+                    sourceCode.setText("");
+                    sourceCode.setForeground(new java.awt.Color(255, 255, 255));
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(sourceCode.getText().trim().equals("")){
+                    sourceCode.setText(CodeHolder);
+                    sourceCode.setForeground(new Color(182, 182, 182));
+                }
+            }
+        });
         jScrollPane2.setViewportView(sourceCode);
 
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 244, 466, 299));
@@ -198,10 +225,30 @@ public class GUI extends MoveJFrame {
 
         input.setBackground(new java.awt.Color(45, 55, 74));
         input.setColumns(20);
-        input.setForeground(new java.awt.Color(255, 255, 255));
+        input.setForeground(new Color(182, 182, 182));
         input.setRows(4);
         input.setCaretColor(Color.white);
         input.setFont(new Font("Roboto", Font.PLAIN, 16));
+        input.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        input.setTabSize(0);
+        input.setText(InputHolder);
+        input.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(input.getText().equalsIgnoreCase(InputHolder)){
+                    input.setText("");
+                    input.setForeground(new java.awt.Color(255, 255, 255));
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if(input.getText().trim().equals("")){
+                    input.setText(InputHolder);
+                    input.setForeground(new Color(182, 182, 182));
+                }
+            }
+        });
         jScrollPane3.setViewportView(input);
 
         jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 577, 650, -1));
@@ -216,6 +263,9 @@ public class GUI extends MoveJFrame {
         process.setRows(5);
         process.setEditable(false);
         process.setFont(new Font("Roboto", Font.PLAIN, 16));
+        process.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        DefaultCaret caret = (DefaultCaret) process.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
         jScrollPane4.setViewportView(process);
 
         jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(696, 695, 282, 178));
@@ -226,6 +276,7 @@ public class GUI extends MoveJFrame {
         compiler.setRows(5);
         compiler.setEditable(false);
         compiler.setFont(new Font("new courier", 0, 16));
+        compiler.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         jScrollPane5.setViewportView(compiler);
 
         jPanel1.add(jScrollPane5, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 695, 650, 178));
@@ -273,10 +324,7 @@ public class GUI extends MoveJFrame {
                 Client.send(Client.BREAK_CONNECT_KEY);
                 Client.close();
             }
-        } catch (IOException e) {
-            process.append(Client.FAIL_CONNECT + "\n");
-            process.append("Click Run to reconnect !\n");
-        }
+        } catch (IOException ignored) {}
         this.dispose();
     }
 
@@ -436,21 +484,19 @@ public class GUI extends MoveJFrame {
             int selectedIndex = selectedBox.getSelectedIndex();
             String description = "COMPILE";
             String language = Client.supportedLanguage[selectedIndex];
-            String script = sourceCode.getText();
-            String stdin = input.getText();
+            String script = sourceCode.getText().replace(CodeHolder,"");
+            String stdin = input.getText().replace(InputHolder,"");
 
             String clientDataPacket = Client.requestHandle(description, language, stdin, script);
-            process.append("\n");
             Client.send(clientDataPacket);
-            process.append("Collected user input.\n");
             System.out.println("Sent packet: " + clientDataPacket + "\n");
             process.append("Sent request.\n");
         } catch (IOException | NullPointerException e) {
             try {
+                Client.close();
                 Client.connectServer();
             } catch (IOException f) {
                 process.append(Client.FAIL_CONNECT + "\n");
-                process.append("Try again !" + "\n");
                 this.setEnabled(true);
                 return;
             }

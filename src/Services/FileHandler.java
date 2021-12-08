@@ -81,10 +81,9 @@ public class FileHandler {
      * Viết dữ liệu vào File có đường dẫn path
      * @param path đường dẫn FILE
      * @param data dữ liệu đầu vào kiểu String muốn viết vào FILE
-     * @return Boolean - True nếu viết thành công và FALSE nếu thất bại
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static Boolean write(String path, String data) {
+    public static void write(String path, String data) {
         try {
             File yourFile = new File(path);
             yourFile.createNewFile(); //Tạo file nếu ko tồn tại
@@ -93,10 +92,7 @@ public class FileHandler {
             byte[] bytes = data.getBytes();
             fileOutputStream.write(bytes);
             fileOutputStream.close();
-            return true;
-        } catch (IOException ignored) {
-            return false;
-        }
+        } catch (IOException ignored) {}
     }
 
     /**

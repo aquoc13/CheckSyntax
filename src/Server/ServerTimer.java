@@ -19,15 +19,14 @@ public class ServerTimer extends Thread{
                 long currentTime = System.currentTimeMillis();
                 for (User user : Server.users) {
                     long userTime = user.getSessionTime();
-                    if (userTime == 0) {
-                        Server.users.remove(user);
-                        Server.users.add(user);
+                    if (userTime == 0)
                         continue;
-                    }
+
                     if (currentTime - userTime >= (sessionTime)) { //60min
                         user.setSecretKey("Expired");
                         user.setSessionTime(0);
-                        Server.checkKeyList();
+                        Server.users.remove(user);
+                        Server.users.add(user);
                     } else break;
                 }
             } catch (InterruptedException ignored) {}

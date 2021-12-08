@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 public class ClientKeyGenerator {
     public static String secretKey;
@@ -17,8 +18,9 @@ public class ClientKeyGenerator {
     public static String create() {
         try {
             do {
+                String keyID = UUID.randomUUID().toString();
                 MessageDigest salt = MessageDigest.getInstance("SHA-256");
-                salt.update(Client.UID.getBytes(StandardCharsets.UTF_8));
+                salt.update(keyID.getBytes(StandardCharsets.UTF_8));
                 secretKey = Long.toHexString(ByteBuffer.wrap(salt.digest()).getLong());
             } while (secretKey.length() != KEY_BIT_LENGTH);
             return secretKey;

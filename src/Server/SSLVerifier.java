@@ -7,7 +7,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
@@ -64,7 +63,9 @@ public class SSLVerifier extends Thread implements Runnable {
             inSSL.close();
             outSSL.close();
             sslSocket.close();
-        } catch (IOException | IllegalArgumentException ignored) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
