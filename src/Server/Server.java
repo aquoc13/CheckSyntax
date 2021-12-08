@@ -1,6 +1,8 @@
 package Server;
 
 import Services.StringUtils;
+import Security.AES_Encryptor;
+import com.google.gson.JsonParser;
 import org.openeuler.com.sun.net.ssl.internal.ssl.Provider;
 
 import javax.net.ssl.SSLServerSocket;
@@ -13,13 +15,16 @@ import java.security.Key;
 import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.Certificate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server {
-    public static ServerManager manager;
+    public static ServerManagerGUI manager;
+    protected static String keyStore_password;
 
     public static Thread listener;
     public static Thread verifier;
@@ -31,7 +36,7 @@ public class Server {
     public static final int EXECUTOR_CORE = 2;          //Số thread một lúc
     public static final int EXECUTOR_MAX = 5;           //số thread tối đa khi server quá tải
     public static final int EXECUTOR_ALIVE_TIME = 1;    //thời gian một thread được sống nếu không làm gì
-    public static final int EXECUTOR_CAPACITY = 10;      //đơn vị phút
+    public static final int EXECUTOR_CAPACITY = 10;     //So luong hang cho
 
     public static final Set<User> users = new LinkedHashSet<>();
 
@@ -50,17 +55,17 @@ public class Server {
     /**
      * Khai báo bảo mật cho SSL Socket với Java Secure Socket Extension
      */
-    private static void addProvider(String keyStore, String password) {
+    private static void addProvider() {
         /*Adding the JSSE (Java Secure Socket Extension) provider which provides SSL and TLS protocols
         and includes functionality for data encryption, server authentication, message integrity,
         and optional client authentication.*/
         Security.addProvider(new Provider());
 
         //specifing the keystore file which contains the certificate/public key and the private key
-        System.setProperty("javax.net.ssl.keyStore", keyStore);
+        System.setProperty("javax.net.ssl.keyStore", SERVER_SIDE_PATH + KEY_STORE_NAME);
 
         //specifing the password of the keystore file
-        System.setProperty("javax.net.ssl.keyStorePassword", password);
+        System.setProperty("javax.net.ssl.keyStorePassword", Server.keyStore_password);
 
         //This optional and it is just to show the dump of the details of the handshake process
         if (SSL_DEBUG_ENABLE)
@@ -70,9 +75,9 @@ public class Server {
     /**
      * Mở server
      */
-    public static void open(String password) throws IOException {
-        addProvider(SERVER_SIDE_PATH + KEY_STORE_NAME, password);
-        getKey(SERVER_SIDE_PATH + KEY_STORE_NAME, KEY_STORE_ALIAS, password);
+    public static void open() throws IOException {
+        addProvider();
+        getKey(Server.keyStore_password);
         try {
             //SSLServerSocketFactory establishes the ssl context and creates SSLServerSocket
             SSLServerSocketFactory sslServerSocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
@@ -97,18 +102,27 @@ public class Server {
         return serverSocket.accept();
     }
 
+    public static String messageHandle(String header, String body, User to) throws IOException {
+        /*switch (header) { //ĐỌc HEADER
+            case "CHAT":
+                break;
+        }*/
+        ServerDataPacket serverPacket = new ServerDataPacket(header, "", body, "", "", "");
+        to.addRequestList(JsonParser.parseString("{ \"Description\": \"server chat\" }").toString());
+        to.addResponseList(JsonParser.parseString(serverPacket.pack()).toString());
+        to.addDateList(LocalDateTime.now().toString());
+        return AES_Encryptor.encrypt(serverPacket.pack(), to.getSecretKey()); //mã hóa bằng secret key trước khi gửi
+    }
 
     /**
      * Lấy chứng chỉ, public key, private key từ Key Store myKeyStore.jks
-     * @param keyStore đường dẫn
-     * @param alias tên alias
      * @param password mật khẩu
      */
-    private static void getKey(String keyStore, String alias, String password) {
+    private static void getKey(String password) {
         try {
             KeyStore ks = KeyStore.getInstance("jks");
-            ks.load(new FileInputStream(keyStore), password.toCharArray());
-            Key key = ks.getKey(alias, password.toCharArray());
+            ks.load(new FileInputStream(SERVER_SIDE_PATH + KEY_STORE_NAME), Server.keyStore_password.toCharArray());
+            Key key = ks.getKey(KEY_STORE_ALIAS, Server.keyStore_password.toCharArray());
             final Certificate cert = ks.getCertificate("mykey");
             System.out.println("--- Certificate START ---");
             System.out.println(cert);
@@ -116,12 +130,5 @@ public class Server {
             System.out.println("Public key: " + StringUtils.getStringFromKey(cert.getPublicKey()));
             System.out.println("Private key: " + StringUtils.getStringFromKey(key));
         } catch (Exception ignored) {}
-    }
-
-    /**
-     * kiểm tra danh sách secretKey và bộ đếm của nó
-     */
-    public static void checkKeyList() {
-        //System.out.println("IDList: " + Server.secretKeyList + "\nIDTimer: " + Server.secretKeyTimer);
     }
 }

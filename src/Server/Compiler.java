@@ -50,7 +50,12 @@ public class Compiler {
         outputStream.flush();
 
         if (JdoodleConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new RuntimeException("Please check your inputs : HTTP error code : "+ JdoodleConnection.getResponseCode());
+            JdoodleConnection.disconnect();
+            console ="Please check your inputs : HTTP error code : " + JdoodleConnection.getResponseCode();
+            statusCode = "null";
+            memory = "null";
+            cpuTime = "null";
+            return console;
         }
 
         BufferedReader bf_InputStream = new BufferedReader(

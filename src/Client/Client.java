@@ -71,31 +71,30 @@ public class Client {
             System.out.println("Secret key: " + secretKey);
             return true;
         } catch (Exception ignored) {
-            create();
+            UID = UUID.randomUUID().toString(); //Tạo UID cho Client;
+            System.out.println("new ClientID: " + UID);
             return false;
         }
     }
 
     /**
-     * Tạo UID và secretKey cho Client
+     * Tạo secretKey cho Client
      */
     public static void create() {
-        UID = UUID.randomUUID().toString(); //Tạo UID cho Client;
         secretKey = ClientKeyGenerator.create();
         String hash = StringUtils.applySha256(UID,secretKey);
         String config = UID + "|" + secretKey  + "|" + hash + "|" + LocalDateTime.now();
         FileHandler.write(CLIENT_SIDE_PATH + FILE_CONFIG_NAME, config);
-        System.out.println("new ClientID: " + UID);
         System.out.println("new Secret key: " + secretKey);
     }
 
-    private static void addProvider(String trustStore, String password) {
+    private static void addProvider(String password) {
         /*Adding the JSSE (Java Secure Socket Extension) provider which provides SSL and TLS protocols
         and includes functionality for data encryption, server authentication, message integrity,
         and optional client authentication.*/
         Security.addProvider(new Provider());
         //specifing the trustStore file which contains the certificate & public of the server
-        System.setProperty("javax.net.ssl.trustStore", trustStore);
+        System.setProperty("javax.net.ssl.trustStore", CLIENT_SIDE_PATH + TRUST_STORE_NAME);
         //specifing the password of the trustStore file
         System.setProperty("javax.net.ssl.trustStorePassword", password);
         //This optional and it is just to show the dump of the details of the handshake process
@@ -111,10 +110,16 @@ public class Client {
         out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
         boolean isVerified = false; //Đã đăng ký phiên làm việc thành công chưa
+        socket.setSoTimeout(10 * 1000);
         do {
             send(UID); //Gửi UID để server kiểm tra
 
             String verify = receive(); //Nhận kết quả kiểm tra từ Server
+            if (verify.equals("Banned")) {
+                Client.close();
+                Client.Frame.appendProcess("UID got banned.");
+                throw new IOException();
+            }
             if (verify.equals("Verified")) { //Thông qua có thể dùng UID và key hiện có
                 System.out.println(verify + ": " + UID + " - Key: " + secretKey);
                 isVerified = true;
@@ -122,11 +127,11 @@ public class Client {
             else if (verify.equals("Expired")) { //Ko thông qua -> tạo UID và key mới thử lại
                 if (haveUID) {
                     System.out.println(verify + ": " + UID + " - Key: " + secretKey);
-                    create();
                 }
 
+
                 //Tạo SSL socket để gửi UID và secretKey một cách an toàn
-                addProvider(CLIENT_SIDE_PATH + TRUST_STORE_NAME, TRUST_STORE_PASSWORD);
+                addProvider(TRUST_STORE_PASSWORD);
                 //SSLSSocketFactory establishes the ssl context and creates SSLSocket
                 sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
                 //Create SSLSocket using SSLServerFactory already established ssl context and connect to server
@@ -135,14 +140,16 @@ public class Client {
                 inSSL = new DataInputStream(sslSocket.getInputStream());
                 outSSL = new DataOutputStream(sslSocket.getOutputStream());
 
+                create(); //Tạo key mới
                 sendVerify(); //Gửi lại UID + key
-                waitVerify(); //chờ phản hồi
+                waitVerify(); //chờ phản hồi ""
                 System.out.println("Sent " + UID + "|" + secretKey + " to server.");
             }
         } while (!isVerified);
 
         //sau khi kết nối thành công
         //-> Tạo Thread lắng nghe thông điệp từ server
+        socket.setSoTimeout(0);
         Listener = new ClientListener();
         Listener.start();
     }
@@ -175,10 +182,12 @@ public class Client {
         return in.readLine();
     }
 
-    public static void close() throws IOException {
-        in.close();
-        out.close();
-        socket.close();
+    public static void close() {
+        try {
+            in.close();
+            out.close();
+            socket.close();
+        } catch (IOException ignored) {}
     }
 
     public static void sendImage(String path) throws IOException {

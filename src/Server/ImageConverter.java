@@ -63,8 +63,8 @@ public class ImageConverter {
             httpclient.getConnectionManager().shutdown();
             file.delete();
             return result;
-        } catch (Exception e) {
-            return null;
+        } catch (Exception ignored) {
+            return "";
         }
     }
 }

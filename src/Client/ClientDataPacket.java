@@ -8,19 +8,6 @@ public class ClientDataPacket {
     private final String stdin;         //input của người dùng
     private final String script;        //Source code
 
-    /**
-     * Khởi tạo data packet cho client từ dữ liệu JSON
-     * @param dataPacketJSON dữ liệu dạng JSON
-     * @param description
-     */
-    public ClientDataPacket(String dataPacketJSON, String description) {
-        this.description = description;
-        JsonObject packet = JsonParser.parseString(dataPacketJSON).getAsJsonObject();
-        this.language = packet.get("language").getAsString();
-        this.stdin = packet.get("stdin").getAsString();
-        this.script = packet.get("script").getAsString();
-    }
-
     public ClientDataPacket(String description, String language, String stdin, String script) {
         this.description = description;
         this.language = language;

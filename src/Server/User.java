@@ -1,11 +1,7 @@
 package Server;
 
-import com.google.gson.*;
-
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class User {
     private final String UID;
@@ -14,13 +10,15 @@ public class User {
     private long sessionTime;
     private String status;
     private String modifiedDate;
-    private final HashMap<String, String> requestList;
-    private final HashMap<String, String> responseList;
+    private final ArrayList<String> requestList;
+    private final ArrayList<String> responseList;
+    private final ArrayList<String> dateList;
 
     public User(String UID) {
         this.UID = UUID.fromString(UID).toString();
-        requestList = new HashMap<>();
-        responseList = new HashMap<>();
+        requestList = new ArrayList<>();
+        responseList = new ArrayList<>();
+        dateList = new ArrayList<>();
     }
 
     public Socket getSocket() {
@@ -67,37 +65,28 @@ public class User {
         this.modifiedDate = modifiedDate;
     }
 
-    public HashMap<String, String> getRequestList() {
+    public ArrayList<String> getRequestList() {
         return requestList;
     }
 
-    public void addRequestList(String data, String date) {
-        this.requestList.put(data,date);
+    public void addRequestList(String data) {
+        this.requestList.add(data);
     }
 
-    public HashMap<String, String> getResponseList() {
+    public ArrayList<String> getResponseList() {
         return responseList;
     }
 
-    public void addResponseList(String data, String date) {
-        this.responseList.put(data,date);
+    public void addResponseList(String data) {
+        this.responseList.add(data);
     }
 
-    @Override
-    public String toString() {
-        JsonObject user = new JsonObject();
-        user.addProperty("UID", UID);
-        user.addProperty("socket", socket.toString());
-        user.addProperty("secretKey", secretKey);
-        user.addProperty("sessionTime", sessionTime);
-        user.addProperty("status", status);
-        user.addProperty("modifiedDate", modifiedDate);
-        user.addProperty("requestList", requestList.toString());
-        user.addProperty("responseList", responseList.toString());
+    public ArrayList<String> getDateList() {
+        return dateList;
+    }
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonElement je = JsonParser.parseString(user.toString());
-        return gson.toJson(je);
+    public void addDateList(String date) {
+        this.dateList.add(date);
     }
 
     @Override

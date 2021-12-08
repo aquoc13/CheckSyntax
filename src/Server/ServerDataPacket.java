@@ -10,20 +10,6 @@ public class ServerDataPacket {
     private final String memory;        //bộ nhớ sử dụng
     private final String cpuTime;       //thời gian xử lý
 
-    /**
-     * Khởi tạo data packet cho server từ dữ liệu JSON
-     * @param dataPacketJSON dữ liệu dạng JSON
-     */
-    public ServerDataPacket(String dataPacketJSON) {
-        JsonObject packet = JsonParser.parseString(dataPacketJSON).getAsJsonObject();
-        this.description = packet.get("description").getAsString();
-        this.format = packet.get("format").getAsString();
-        this.output = packet.get("output").getAsString();
-        this.statusCode = packet.get("statusCode").getAsString();
-        this.memory = packet.get("memory").getAsString();
-        this.cpuTime = packet.get("cpuTime").getAsString();
-    }
-
     public ServerDataPacket(String Description, String format, String output, String statusCode, String memory, String cpuTime) {
         this.description = Description;
         this.format = format;

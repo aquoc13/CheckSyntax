@@ -3,7 +3,6 @@ package Server;
 import Client.ClientDataPacket;
 import Security.AES_Encryptor;
 import Services.StringUtils;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import javax.imageio.ImageIO;
@@ -41,20 +40,20 @@ public class ServerListener extends Thread implements Runnable{
     @Override
     public void run() {
         try {
+            System.out.println("Client " + fromIP + " is connected.");
             verify();
             //Lặp liên tục để nhận request từ phía Client
             while(true) {
                 try {
-                    for (User u:Server.users) {
-                        System.out.println(u);
-                    }
                     //Chờ thông điệp từ Client rồi xử lý
                     String line = receive();
 
                     if (line.equals(Server.BREAK_CONNECT_KEY)) {
                         break; //Vòng lặp sẽ ngừng khi Client gửi lệnh "bye"
                     }
-                    System.out.println("Server get: " + line + " from " + fromIP + " - ID: " + user.getUID());
+                    System.out.println("Server get: " + line
+                            + " from " + fromIP
+                            + " - ID: " + user.getUID());
 
                     //Xử lý dữ liệu bằng class ServerHandler method responseHandle
                     ClientDataPacket packet = requestHandle(line, user.getSecretKey());
@@ -62,8 +61,10 @@ public class ServerListener extends Thread implements Runnable{
 
                     // Server gửi phản hồi ngược lại cho client (chuỗi đảo ngược)
                     send(line);
-                    System.out.println("Server response: " + line + " to " + fromIP + " - ID: " + user.getUID());
-                } catch (SocketException | NullPointerException ignore) {
+                    System.out.println("Server response: " + line
+                            + " to " + fromIP
+                            + " - ID: " + user.getUID());
+                } catch (Exception e) {
                     break;
                 }
             }
@@ -71,10 +72,18 @@ public class ServerListener extends Thread implements Runnable{
             //Thực hiện đóng kết nối socket và đóng cổng đầu vào (in) + đầu ra (out).
             close();
             System.out.println("Server closed connection with " + fromIP + "- ID: " + user.getUID());
-        } catch (IOException ignored) {}
+        } catch (IOException | NullPointerException ignored) {
+            //Thực hiện đóng kết nối socket và đóng cổng đầu vào (in) + đầu ra (out).
+            try {
+                in.close();
+                out.close();
+                socket.close();
+                System.out.println("Server closed connection with " + fromIP + ".");
+            } catch (IOException ignored1) {}
+        }
     }
 
-    private void verify() throws IOException {
+    private void verify() throws IOException, NullPointerException {
         String verifyStatus = "Expired";
         do {
             user = new User(receive());
@@ -85,6 +94,11 @@ public class ServerListener extends Thread implements Runnable{
                         break;
                     }
                 }
+                if (user.getSecretKey().equalsIgnoreCase("Banned")) {
+                    send("Banned");
+                    close();
+                    return;
+                }
                 user.setSocket(socket);
                 user.setStatus("online");
                 if (!user.getSecretKey().equals("Expired"))
@@ -93,10 +107,22 @@ public class ServerListener extends Thread implements Runnable{
 
             send(verifyStatus);
         } while (verifyStatus.equals("Expired"));
-        System.out.println("Client " + fromIP + " is connecting" + " - ID: " + user.getUID() + "- Key: " + user.getSecretKey());
+        System.out.println("Client " + fromIP
+                + " - " + verifyStatus + " with ID: " + user.getUID()
+                + " | Key: " + user.getSecretKey());
+
+        recheckIfTargetAtManager();
     }
 
-    public void send(String data) throws IOException, SocketException {
+    private void recheckIfTargetAtManager() {
+        String managerCurrentTarget = Server.manager.textField.getText();
+        if (managerCurrentTarget.equals(user.getUID())
+                || fromIP.contains(managerCurrentTarget)) {
+            Server.manager._btnCheck.doClick();
+        }
+    }
+
+    public void send(String data) throws IOException {
         out.write(data);
         out.newLine();
         out.flush();
@@ -117,8 +143,10 @@ public class ServerListener extends Thread implements Runnable{
     public void close() throws IOException {
         in.close();
         out.close();
-        user.setStatus("offline");
+        if (!user.getStatus().equals("banned"))
+            user.setStatus("offline");
         user.getSocket().close();
+        recheckIfTargetAtManager();
     }
 
     /**
@@ -128,7 +156,8 @@ public class ServerListener extends Thread implements Runnable{
      */
     public ClientDataPacket requestHandle(String data, String secretKey) {
         String decryptJson = AES_Encryptor.decrypt(data, secretKey);
-        user.addRequestList(JsonParser.parseString(decryptJson).toString(), LocalDateTime.now().toString());
+        user.addRequestList(JsonParser.parseString(decryptJson).toString());
+        user.addDateList(LocalDateTime.now().toString());
         return ClientDataPacket.unpack(decryptJson); //giả mã bằng secret key
     }
 
@@ -146,24 +175,25 @@ public class ServerListener extends Thread implements Runnable{
         String cpuTime = "0ms";
 
         switch (dataPacket.getDescription()) { //ĐỌc HEADER
-            case "IMAGE" -> {
+            case "IMAGE":
                 String path = receiveImage(dataPacket.getScript());
                 output = ImageConverter.toText(path);
-            }
+                break;
 
-            case "COMPILE" -> {
+            case "COMPILE":
                 Compiler compiler = new Compiler(dataPacket.getScript(), dataPacket.getStdin(), dataPacket.getLanguage());
                 output = compiler.compile();
                 statusCode = compiler.getStatusCode();
                 memory = compiler.getMemory();
                 cpuTime = compiler.getCpuTime();
-            }
+                break;
 
-            case "FORMAT" -> {}
+            case "FORMAT":
+                break;
         }
 
         ServerDataPacket serverPacket = new ServerDataPacket(description, format, output, statusCode, memory, cpuTime);
-        user.addResponseList(JsonParser.parseString(serverPacket.pack()).toString(), LocalDateTime.now().toString());
+        user.addResponseList(JsonParser.parseString(serverPacket.pack()).toString());
         return AES_Encryptor.encrypt(serverPacket.pack(), secretKey); //mã hóa bằng secret key trước khi gửi
     }
 }

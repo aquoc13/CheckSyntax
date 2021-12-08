@@ -2,7 +2,7 @@ package Client;
 
 import Server.ServerDataPacket;
 
-import java.io.IOException;
+import java.awt.*;
 
 /**
  * Tạo ra một thread mới để kết nối và xử lý lắng nghe từ phía Server
@@ -14,29 +14,42 @@ public class ClientListener extends Thread implements Runnable{
         try {
             while (true) {
                 String response = Client.receive(); //Chờ thông điệp từ Server rồi xử lý
-
                 System.out.println("Receive packet: " + response + "\n");
-                Client.Frame.process.append("Receive response.\n");
 
                 ServerDataPacket serverPacket = Client.responseHandle(response);
-                Client.Frame.process.append("Print result.\n");
                 System.out.println("Result:\n" + serverPacket.pack());
 
+                //noinspection EnhancedSwitchMigration
                 switch (serverPacket.getDescription()) { //ĐỌc HEADER
-                    case "COMPILE" -> {
+                    case "COMPILE":
+                        if (serverPacket.getMemory().equals("null")
+                            || serverPacket.getCpuTime().equals("null")
+                            || serverPacket.getOutput().toLowerCase().contains("syntax"))
+                            Client.Frame.compiler.setForeground(new Color(231, 76, 60));
+                        else Client.Frame.compiler.setForeground(new Color(117, 236, 99));
                         Client.Frame.compiler.setText(serverPacket.getOutput() + "\n");
                         Client.Frame.compiler.append("Status code: " + serverPacket.getStatusCode() + "\n");
                         Client.Frame.compiler.append("Memory usage: " + serverPacket.getMemory() + "\n");
-                        Client.Frame.compiler.append("CPU time:" + serverPacket.getCpuTime() + "\n");
-                    }
+                        Client.Frame.compiler.append("CPU time: " + serverPacket.getCpuTime() + "\n");
+                        break;
 
-                    case "FORMAT" -> Client.Frame.prettifyCode.setText(serverPacket.getFormat() + "\n");
+                    case "FORMAT":
+                        Client.Frame.prettifyCode.setText(serverPacket.getFormat() + "\n");
+                        break;
 
-                    case "IMAGE" -> Client.Frame.sourceCode.setText(serverPacket.getOutput() + "\n");
+                    case "IMAGE":
+                        Client.Frame.sourceCode.setText(serverPacket.getOutput() + "\n");
+                        break;
+
+                    case "CHAT":
+                        Client.Frame.process.append("Server: " + serverPacket.getOutput() + "\n");
+                        break;
                 }
 
             }
-        } catch (IOException | NullPointerException ignored) {
+        } catch (Exception e) {
+            Client.close();
+            System.out.println("Server closed.");
             Client.Frame.process.append("Disconnected.\n");
         }
     }
