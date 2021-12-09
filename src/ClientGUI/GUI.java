@@ -2,20 +2,29 @@ package ClientGUI;
 
 import Client.Client;
 import Services.FileHandler;
+import Services.StringUtils;
+import org.drjekyll.fontchooser.FontDialog;
+import org.fife.rsta.ac.LanguageSupportFactory;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Objects;
 
 public class GUI extends MoveJFrame {
     private static final String CodeHolder = "Enter your source code here.";
     private static final String InputHolder = "Enter your input here.";
+    private static String TextCounter;
 
     /**
      * Creates new form GUI
@@ -25,13 +34,22 @@ public class GUI extends MoveJFrame {
         setTitle("CheckSyntax");
         setLocationRelativeTo(null);
         setEnabled(false);
-        setFocusable(true);
     }
     
     static boolean maximized = true;
 
     public void appendProcess(String text) {
-        process.append(text + "\n");
+        Calendar calendar = Calendar.getInstance();
+        String hour = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
+        String minute = String.valueOf(calendar.get(Calendar.MINUTE));
+
+        if (calendar.get(Calendar.HOUR_OF_DAY) < 10) //số time bé hơn 10 thì thêm 0 vào trước
+            hour = "0" + hour;
+        if (calendar.get(Calendar.MINUTE) < 10)
+            minute = "0" + minute;
+
+        String time = "[" + hour + ":" + minute + "] ";
+        process.append(time + text + "\n");
     }
 
     /**
@@ -51,10 +69,10 @@ public class GUI extends MoveJFrame {
         selectedBox = new javax.swing.JComboBox<>();
         _btnUpFile1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        prettifyCode = new javax.swing.JTextArea();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        sourceCode = new javax.swing.JTextArea();
+        prettifyCode = new RSyntaxTextArea();
+        jScrollPane1 = new RTextScrollPane(prettifyCode);
+        sourceCode = new RSyntaxTextArea();
+        jScrollPane2 = new RTextScrollPane(sourceCode);
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         _btnLink = new javax.swing.JButton();
@@ -81,7 +99,7 @@ public class GUI extends MoveJFrame {
 
         subTitle.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         subTitle.setForeground(new java.awt.Color(189, 189, 189));
-        subTitle.setText("Java, Python, C# and C++ compiler, syntax checking tool. ");
+        subTitle.setText("Java, Python, PHP, C and C++ compiler, syntax checking tool. ");
         jPanel1.add(subTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 60, -1, -1));
 
         close.setIcon(new javax.swing.ImageIcon("image/close1.png")); // NOI18N
@@ -93,7 +111,7 @@ public class GUI extends MoveJFrame {
         });
         jPanel1.add(close, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 20, -1, -1));
 
-        _btnFormat.setBackground(new java.awt.Color(239, 94, 29));
+        _btnFormat.setBackground(new java.awt.Color(65,105,225));
         _btnFormat.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         _btnFormat.setForeground(new java.awt.Color(255, 255, 255));
         _btnFormat.setIcon(new javax.swing.ImageIcon("image/format_paint.png")); // NOI18N
@@ -110,6 +128,32 @@ public class GUI extends MoveJFrame {
         selectedBox.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         selectedBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Java", "Python", "PHP", "C", "C++" }));
         selectedBox.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        selectedBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    switch (Objects.requireNonNull(selectedBox.getSelectedItem()).toString()) {
+                        case "Java":
+                            sourceCode.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+                            break;
+
+                        case "Python":
+                            sourceCode.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PYTHON);
+                            break;
+
+                        case "PHP":
+                            sourceCode.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_PHP);
+                            break;
+
+                        case "C":
+                        case "C++":
+                            sourceCode.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_C);
+                            break;
+                    }
+                    prettifyCode.setSyntaxEditingStyle(sourceCode.getSyntaxEditingStyle());
+                }
+            }
+        });
         jPanel1.add(selectedBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 150, 230, 47));
 
         _btnUpFile1.setFocusPainted(false);
@@ -129,54 +173,113 @@ public class GUI extends MoveJFrame {
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Source code:");
+        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(!sourceCode.getText().equalsIgnoreCase(CodeHolder))
+                    StringUtils.copyToClipboard(sourceCode.getText());
+            }
+        });
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 205, -1, 28));
 
-        prettifyCode.setBackground(new java.awt.Color(61, 72, 96));
-        prettifyCode.setColumns(20);
-        prettifyCode.setForeground(new java.awt.Color(255, 255, 255));
-        prettifyCode.setRows(5);
-        prettifyCode.setBorder(null);
-        prettifyCode.setEditable(false);
-        prettifyCode.setFont(new Font("Roboto", Font.PLAIN, 16));
-        prettifyCode.setTabSize(2);
-        prettifyCode.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        jScrollPane1.setViewportView(prettifyCode);
+        prettifyCode.setBackground(new Color(232, 232, 232));
+        prettifyCode.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+        prettifyCode.setCodeFoldingEnabled(true);
+        prettifyCode.setAutoIndentEnabled(true);
+        prettifyCode.setTabSize(sourceCode.getTabSize());
+        prettifyCode.setUseSelectedTextColor(true);
+        prettifyCode.setHighlightCurrentLine(false);
+        jScrollPane1.setFoldIndicatorEnabled(false);
+        jScrollPane1.setLineNumbersEnabled(false);
+        prettifyCode.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                prettifyCode.setHighlightCurrentLine(true);
+                prettifyCode.setBackground(Color.white);
+                jScrollPane1.setFoldIndicatorEnabled(true);
+                jScrollPane1.setLineNumbersEnabled(true);
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                prettifyCode.setHighlightCurrentLine(false);
+                prettifyCode.setBackground(new Color(232, 232, 232));
+                jScrollPane1.setFoldIndicatorEnabled(false);
+                jScrollPane1.setLineNumbersEnabled(false);
+            }
+        });
+        LanguageSupportFactory.get().register(prettifyCode);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(512, 244, 466, 299));
 
-        sourceCode.setBackground(new java.awt.Color(61, 72, 96));
-        sourceCode.setColumns(20);
-        sourceCode.setForeground(new Color(182, 182, 182));
-        sourceCode.setRows(5);
-        sourceCode.setBorder(null);
-        sourceCode.setCaretColor(Color.white);
-        sourceCode.setFont(new Font("Roboto", Font.PLAIN, 16));
-        sourceCode.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        sourceCode.setTabSize(2);
+        sourceCode.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+        sourceCode.setCodeFoldingEnabled(true);
+        sourceCode.setAutoIndentEnabled(true);
+        sourceCode.setTabSize(3);
+        sourceCode.setUseSelectedTextColor(true);
+        sourceCode.setHighlightCurrentLine(false);
         sourceCode.setText(CodeHolder);
+        sourceCode.setForeground(new Color(162, 162, 162));
+
+        sourceCode.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                countText();
+            }
+            public void removeUpdate(DocumentEvent e) {
+                countText();
+            }
+            public void insertUpdate(DocumentEvent e) {
+                countText();
+            }
+
+            public void countText() {
+                if (compiler.getText().isEmpty()
+                || compiler.getText().equalsIgnoreCase(TextCounter)) {
+                    compiler.setForeground(Color.white);
+                    int lineCount = StringUtils.getWrappedLines(sourceCode);
+                    int textCount = sourceCode.getText().length();
+                    int wordCount = sourceCode.getText().split("\\s").length;
+                    TextCounter = "Text: " + textCount + " / "
+                                + "Words: " + wordCount + " / "
+                                + "Lines: " + lineCount;
+                    compiler.setText(TextCounter);
+                }
+            }
+        });
+
         sourceCode.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if(sourceCode.getText().equalsIgnoreCase(CodeHolder)){
+                if(sourceCode.getText().equalsIgnoreCase(CodeHolder)) {
+                    sourceCode.setHighlightCurrentLine(true);
                     sourceCode.setText("");
-                    sourceCode.setForeground(new java.awt.Color(255, 255, 255));
+                    sourceCode.setForeground(Color.black);
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if(sourceCode.getText().trim().equals("")){
+                if(sourceCode.getText().trim().equals("")) {
+                    sourceCode.setHighlightCurrentLine(false);
                     sourceCode.setText(CodeHolder);
-                    sourceCode.setForeground(new Color(182, 182, 182));
+                    sourceCode.setForeground(new Color(162, 162, 162));
                 }
             }
         });
-        jScrollPane2.setViewportView(sourceCode);
+        LanguageSupportFactory.get().register(sourceCode);
 
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 244, 466, 299));
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Prettifier Code");
+        jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel2.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                StringUtils.copyToClipboard(prettifyCode.getText());
+            }
+        });
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(512, 210, -1, -1));
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -255,7 +358,15 @@ public class GUI extends MoveJFrame {
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("Compiler");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 673, -1, -1));
+        jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel4.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                compiler.setText("");
+                compiler.setForeground(Color.white);
+            }
+        });
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 678, -1, -1));
 
         process.setBackground(new java.awt.Color(27, 35, 51));
         process.setColumns(20);
@@ -275,7 +386,7 @@ public class GUI extends MoveJFrame {
         compiler.setForeground(new java.awt.Color(255, 255, 255));
         compiler.setRows(5);
         compiler.setEditable(false);
-        compiler.setFont(new Font("new courier", 0, 16));
+        compiler.setFont(new Font("Consolas", 0, 14));
         compiler.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         jScrollPane5.setViewportView(compiler);
 
@@ -283,7 +394,7 @@ public class GUI extends MoveJFrame {
 
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Process");
-        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(696, 673, -1, -1));
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(696, 678, -1, -1));
 
         _btnRestart.setBackground(new java.awt.Color(13, 21, 37));
         _btnRestart.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
@@ -349,25 +460,23 @@ public class GUI extends MoveJFrame {
                 if (DialogFile.isOK() && !DialogFile.latestFile.isEmpty()) {
                     process.append("\n");
                     DialogFile.latestFile = FileHandler.checkNullExtension(DialogFile.latestFile);
-                    process.append("Open: " + DialogFile.latestFile + "\n");
+                    appendProcess("Open: " + DialogFile.latestFile);
 
                     String fileType = FileHandler.getFileExtension(DialogFile.latestFile);
-                    process.append("Type: " + fileType + "\n");
 
                     if (!fileType.equals("jpg")
                             && Arrays.asList(FileHandler.supportedExtension).contains(fileType)) {
                         int typeIndex = Arrays.asList(FileHandler.supportedExtension).indexOf(fileType);
                         selectedBox.setSelectedIndex(typeIndex);
-                        process.append("Selected language: " + selectedBox.getSelectedItem() + "\n");
                     }
-                    else process.append("File language isn't supported.\n");
+                    else appendProcess("File language isn't supported.");
 
                     if (fileType.equals("jpg")) {
                         try {
                             Client.sendImage(DialogFile.latestFile);
                             DialogFile.latestFile = DialogFile.latestFile.replace(".jpg","");
                         } catch (IOException ignored) {
-                            process.append("Import fail: Cant convert image.\n");
+                            appendProcess("Import fail: Cant convert image.");
                             frame.setEnabled(true);
                             frame.toFront();
                         }
@@ -376,9 +485,10 @@ public class GUI extends MoveJFrame {
                         String code = FileHandler.read(DialogFile.latestFile);
                         if (!code.isEmpty()) {
                             sourceCode.setText(code);
-                            process.append("Import success.\n");
+                            sourceCode.setForeground(Color.black);
+                            appendProcess("Import success.");
                         }
-                        else process.append("Import fail: File empty.\n");
+                        else appendProcess("Import fail: File empty.");
                     }
                 }
                 frame.setEnabled(true);
@@ -402,15 +512,14 @@ public class GUI extends MoveJFrame {
                 if (DialogLink.isOK() && !DialogLink.latestURL.isEmpty()) {
                     process.append("\n");
                     String fileType = FileHandler.getFileExtension(DialogLink.latestURL);
-                    process.append("Connect: " + DialogLink.latestURL + "\n");
+                    appendProcess("Connect: " + DialogLink.latestURL + "");
 
                     if (!fileType.equals("jpg")
                             && Arrays.asList(FileHandler.supportedExtension).contains(fileType)) {
                         int typeIndex = Arrays.asList(FileHandler.supportedExtension).indexOf(fileType);
                         selectedBox.setSelectedIndex(typeIndex);
-                        process.append("Selected language: " + selectedBox.getSelectedItem() + "\n");
                     }
-                    else process.append("File language isn't supported." + "\n");
+                    else appendProcess("File language isn't supported." + "");
 
                     if (fileType.equals("jpg")) {
                         try {
@@ -418,7 +527,7 @@ public class GUI extends MoveJFrame {
                             DialogLink.latestURL = DialogLink.latestURL.replace(".jpg","");
                         } catch (IOException f) {
                             f.printStackTrace();
-                            process.append("Import fail: Cant convert web image.\n");
+                            appendProcess("Import fail: Cant convert web image.");
                             frame.setEnabled(true);
                             frame.toFront();
                         }
@@ -427,8 +536,9 @@ public class GUI extends MoveJFrame {
                         String code = FileHandler.readURL(DialogLink.latestURL);
                         if (!code.isEmpty()) {
                             sourceCode.setText(code);
-                            process.append("Import success." + "\n");
-                        } else process.append("Import fail: Web empty." + "\n");
+                            sourceCode.setForeground(Color.black);
+                            appendProcess("Import success." + "");
+                        } else appendProcess("Import fail: Web empty." + "");
                     }
                 }
                 frame.setEnabled(true);
@@ -452,11 +562,11 @@ public class GUI extends MoveJFrame {
                 if (DialogFile.isOK() && !DialogFile.latestFile.isEmpty()) {
                     process.append("\n");
                     DialogFile.latestFile = FileHandler.checkNullExtension(DialogFile.latestFile);
-                    process.append("Open: " + DialogFile.latestFile + "\n");
+                    appendProcess("Open: " + DialogFile.latestFile);
 
                     String code = prettifyCode.getText();
                     FileHandler.write(DialogFile.latestFile, code);
-                    process.append("Export success." + "\n");
+                    appendProcess("Export success.");
                 }
                 frame.setEnabled(true);
                 frame.toFront();
@@ -468,11 +578,18 @@ public class GUI extends MoveJFrame {
      * Event nút reset
      */
     private void _btnRestartActionPerformed(java.awt.event.ActionEvent evt) {
-        sourceCode.setText("");
-        prettifyCode.setText("");
-        input.setText("");
-        compiler.setText("");
-        process.append("\nReset.\n");
+        FontDialog dialog = new FontDialog(this, "Setting Fonts - CheckSyntax", true);
+        dialog.setSelectedFont(sourceCode.getFont());
+        dialog.setLocationRelativeTo(null);
+        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        dialog.setIconImage(new ImageIcon("image/icon.png").getImage());
+        dialog.setBackground(new Color(13, 21, 37));
+        dialog.setVisible(true);
+        if (!dialog.isCancelSelected()) {
+            sourceCode.setFont(dialog.getSelectedFont());
+            prettifyCode.setFont(dialog.getSelectedFont());
+            appendProcess("Changed font.");
+        }
     }
 
     /**
@@ -490,17 +607,17 @@ public class GUI extends MoveJFrame {
             String clientDataPacket = Client.requestHandle(description, language, stdin, script);
             Client.send(clientDataPacket);
             System.out.println("Sent packet: " + clientDataPacket + "\n");
-            process.append("Sent request.\n");
+            appendProcess("Sent request.");
         } catch (IOException | NullPointerException e) {
             try {
                 Client.close();
                 Client.connectServer();
             } catch (IOException f) {
-                process.append(Client.FAIL_CONNECT + "\n");
+                appendProcess(Client.FAIL_CONNECT);
                 this.setEnabled(true);
                 return;
             }
-            process.append(Client.SUCCESS_CONNECT + "\n");
+            appendProcess(Client.SUCCESS_CONNECT);
         }
         this.setEnabled(true);
     }//GEN-LAST:event__btnRunActionPerformed
@@ -522,15 +639,15 @@ public class GUI extends MoveJFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private RTextScrollPane jScrollPane1;
+    private RTextScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    public javax.swing.JTextArea prettifyCode;
+    public RSyntaxTextArea prettifyCode;
     public javax.swing.JTextArea process;
     public javax.swing.JComboBox<String> selectedBox;
-    public javax.swing.JTextArea sourceCode;
+    public RSyntaxTextArea sourceCode;
     private javax.swing.JLabel subTitle;
     private javax.swing.JLabel title;
     // End of variables declaration

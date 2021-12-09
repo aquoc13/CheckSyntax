@@ -16,7 +16,6 @@ import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;

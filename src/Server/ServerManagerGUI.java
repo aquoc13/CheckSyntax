@@ -55,7 +55,6 @@ public class ServerManagerGUI extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         setResizable(false);
-        setFocusable(true);
         setTitle("Server manager - CheckSyntax");
         setIconImage(icon);
         _btnExecute.setEnabled(false);

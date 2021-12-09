@@ -1,7 +1,5 @@
 package Security;
 
-import Client.Client;
-
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

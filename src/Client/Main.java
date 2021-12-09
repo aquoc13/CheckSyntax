@@ -1,6 +1,7 @@
 package Client;
 
 import ClientGUI.GUI;
+import com.formdev.flatlaf.FlatIntelliJLaf;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -10,6 +11,7 @@ public class Main {
         //System.err.close();
 
         //Khởi tạo giao diện
+        FlatIntelliJLaf.setup();
         Client.Frame = new GUI();
         try {
             UIManager.setLookAndFeel("Window");

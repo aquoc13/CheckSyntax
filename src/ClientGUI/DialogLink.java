@@ -53,7 +53,7 @@ public class DialogLink extends MoveJFrame {
         jLabel2.setBackground(new Color(255, 255, 255));
         jLabel2.setFont(new Font("Roboto", 0, 12)); // NOI18N
         jLabel2.setForeground(new Color(255, 255, 255));
-        jLabel2.setText("input your URL");
+        jLabel2.setText("Input your URL");
         jPanel1.add(jLabel2, new AbsoluteConstraints(27, 27, -1, -1));
 
         input.setText(latestURL);

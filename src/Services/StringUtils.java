@@ -1,5 +1,10 @@
 package Services;
 
+import javax.swing.*;
+import javax.swing.text.View;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -33,14 +38,25 @@ public class StringUtils {
     }*/
 
     /*
-      Copy chuỗi
-      @param textToCopy chuỗi muốn copy
+     *  Return the number of lines of text, including wrapped lines.
      */
-    /*public static void copyToClipboard(String textToCopy) {
+    public static int getWrappedLines(JTextArea component)
+    {
+        View view = component.getUI().getRootView(component).getView(0);
+        int preferredHeight = (int)view.getPreferredSpan(View.Y_AXIS);
+        int lineHeight = component.getFontMetrics( component.getFont() ).getHeight();
+        return preferredHeight / lineHeight;
+    }
+
+    /**
+     * Copy chuỗi
+     * @param textToCopy chuỗi muốn copy
+     */
+    public static void copyToClipboard(String textToCopy) {
         StringSelection stringSelection = new StringSelection(textToCopy);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
-    }*/
+    }
 
     /**
      * Chuyển Key sang String
