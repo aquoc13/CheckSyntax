@@ -114,7 +114,7 @@ public class GUI extends MoveJFrame {
         _btnFormat.setBackground(new java.awt.Color(65,105,225));
         _btnFormat.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         _btnFormat.setForeground(new java.awt.Color(255, 255, 255));
-        _btnFormat.setIcon(new javax.swing.ImageIcon("image/format_paint.png")); // NOI18N
+        _btnFormat.setIcon(new javax.swing.ImageIcon("image/format.png")); // NOI18N
         _btnFormat.setText("FORMAT");
         _btnFormat.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         _btnFormat.setFocusPainted(false);
@@ -399,7 +399,7 @@ public class GUI extends MoveJFrame {
         _btnRestart.setBackground(new java.awt.Color(13, 21, 37));
         _btnRestart.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         _btnRestart.setForeground(new java.awt.Color(255, 255, 255));
-        _btnRestart.setIcon(new javax.swing.ImageIcon("image/restart_alt.png")); // NOI18N
+        _btnRestart.setIcon(new javax.swing.ImageIcon("image/format_paint.png")); // NOI18N
         _btnRestart.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         _btnRestart.setFocusPainted(false);
         _btnRestart.addActionListener(new java.awt.event.ActionListener() {
