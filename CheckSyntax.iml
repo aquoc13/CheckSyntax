@@ -8,16 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/lib/htmlunit-2.55.0/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/lib/htmlunit-2.55.0/lib" recursive="false" />
-      </library>
-    </orderEntry>
-    <orderEntry type="library" name="lib1" level="project" />
+    <orderEntry type="library" name="htmlunit" level="project" />
   </component>
 </module>
