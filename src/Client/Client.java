@@ -187,7 +187,7 @@ public class Client {
             in.close();
             out.close();
             socket.close();
-        } catch (IOException ignored) {}
+        } catch (Exception ignored) {}
     }
 
     public static void sendImage(String path) throws IOException {

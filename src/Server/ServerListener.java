@@ -9,9 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class ServerListener extends Thread implements Runnable{
     protected User user;
@@ -111,9 +109,11 @@ public class ServerListener extends Thread implements Runnable{
                 + " - " + verifyStatus + " with ID: " + user.getUID()
                 + " | Key: " + user.getSecretKey());
 
+        //For server manager (ignore)
         recheckIfTargetAtManager();
     }
 
+    //For server manager (ignore)
     private void recheckIfTargetAtManager() {
         String managerCurrentTarget = Server.manager.textField.getText();
         if (managerCurrentTarget.equals(user.getUID())
@@ -143,9 +143,13 @@ public class ServerListener extends Thread implements Runnable{
     public void close() throws IOException {
         in.close();
         out.close();
-        if (!user.getStatus().equals("banned"))
+        //For server manager (ignore)
+        if (user.getStatus().equals("online"))
             user.setStatus("offline");
+
         user.getSocket().close();
+
+        //For server manager (ignore)
         recheckIfTargetAtManager();
     }
 

@@ -1,5 +1,7 @@
 package Server;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+
 import javax.net.ssl.SSLSocket;
 import java.io.IOException;
 import java.net.Socket;
@@ -7,6 +9,7 @@ import java.util.concurrent.*;
 
 public class Main {
     public static void main(String[] args) {
+        FlatIntelliJLaf.setup();
         ServerManagerGUI.AuthenticationFrame();
         Server.manager = new ServerManagerGUI();
     }

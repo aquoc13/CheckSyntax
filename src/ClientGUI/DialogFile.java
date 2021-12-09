@@ -51,7 +51,7 @@ public class DialogFile extends MoveJFrame {
         jLabel2.setBackground(new java.awt.Color(255, 255, 255));
         jLabel2.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("choose your file");
+        jLabel2.setText("Choose your file");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(27, 27, -1, -1));
 
         input.setText(latestFile);
