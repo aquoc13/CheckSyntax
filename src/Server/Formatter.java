@@ -48,12 +48,13 @@ public class Formatter {
             btn_Beautify.click();
 
             //Lấy script formated
-            webClient.waitForBackgroundJavaScript(2*1000); //Đợi page thực thi format
+            webClient.waitForBackgroundJavaScript(3*1000); //Đợi page thực thi format
             javaScriptCode = "outputeditor.getValue()";
-            formated = page.executeJavaScript(javaScriptCode).getJavaScriptResult().toString();
-        } catch (Exception ignore) {
-            ignore.printStackTrace();
-        }
+            do {
+                formated = page.executeJavaScript(javaScriptCode).getJavaScriptResult().toString();
+            } while (formated.equals("\n"));
+
+        } catch (Exception ignore) {}
         return formated;
     }
 
@@ -64,7 +65,7 @@ public class Formatter {
         String temp;
         long totalTime = 0;
         int times;
-        for (times=1; times<=100; times++) {
+        for (times=1; times<=1000; times++) {
             long start = System.currentTimeMillis();
             string = new StringTokenizer(formatter.format(), "\n");
             temp = string.nextToken();
