@@ -17,7 +17,9 @@ public class Main {
     public static void run() {
         try {
             Server.open();
-        } catch (IOException ignored) {}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //Thread nhận đăng ký UID và secret key
         Server.verifier = new Thread(new Runnable() {
@@ -28,7 +30,8 @@ public class Main {
                         Server.sslExecutor = Executors.newCachedThreadPool();
                         SSLSocket sslSocket = Server.verifyClient(); //chờ kết nối từ Client để xác minh
                         Server.sslExecutor.execute(new SSLVerifier(sslSocket)); //Tạo một luồng thread mới xử lý kết nối từ Client vừa accept()
-                    } catch (IOException ignored) {
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }
