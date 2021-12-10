@@ -82,15 +82,12 @@ public class StringUtils {
      * Format chuỗi code trước khi đẩy api đưa theo ngôn ngữ
      * @return Chuỗi đã format phù hợp để đẩy lên api
      */
-    public static String convertEscapeCharacters(String script, String language) {
+    public static String convertEscapeCharacters(String script) {
         script = script
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"")
                 .replace("\n", "\\n")
                 .replace("\t", "\\t");
-        if (!language.equals("php")) //php thì k cần chuyển char[']
-            script = script.replace("\'", "\\\'");
-
         return script;
     }
 

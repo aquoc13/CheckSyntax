@@ -6,6 +6,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import static Services.StringUtils.convertEscapeCharacters;
+import static Services.FileHandler.read;
 
 public class Compiler {
     private HttpURLConnection JdoodleConnection;
@@ -19,8 +20,8 @@ public class Compiler {
      */
     public Compiler (String script, String stdin, String language) {
         String versionIndex = getVersionIndex(language);
-        script = convertEscapeCharacters(script, language);
-        stdin = convertEscapeCharacters(stdin, language);
+        script = convertEscapeCharacters(script);
+        stdin = convertEscapeCharacters(stdin);
 
         try {
             URL url = new URL("https://api.jdoodle.com/v1/execute");
@@ -143,25 +144,15 @@ public class Compiler {
         }
     }
 
-    // My test ----------------------------------------------------------------------------------------------------------
-//    public static String readFile(String filePatch) throws IOException{
-//        File file = new File(filePatch);
-//        Scanner scanner = new Scanner(file);
-//        String script = "";
-//        while (scanner.hasNextLine()) {
-//            script += scanner.nextLine() + "\n";
-//        }
-//        return script;
-//    }
+// My test ----------------------------------------------------------------------------------------------------------
+//    public static void main(String[] args) throws IOException{
+//        Compiler compiler;
+//        compiler = new Compiler();
+//        System.out.println(compiler.getCreditSpent());
 //
-    public static void main(String[] args) throws IOException{
-        Compiler compiler;
-        compiler = new Compiler();
-        System.out.println(compiler.getCreditSpent());
-
 //        System.out.println("java");
 //        compiler = new Compiler(
-//                readFile("scriptFIles\\sum.java"), "", "java");
+//                read("demoFiles/sum.java"), "", "java");
 //        System.out.println(compiler.compile());
 //        System.out.println("cpuTime: " + compiler.getCpuTime());
 //        System.out.println("memory: " + compiler.getMemory());
@@ -193,5 +184,5 @@ public class Compiler {
 //        System.out.println(compiler.compile());
 //        System.out.println("cpuTime: " + compiler.getCpuTime());
 //        System.out.println("memory: " + compiler.getMemory());
-    }
+//    }
 }

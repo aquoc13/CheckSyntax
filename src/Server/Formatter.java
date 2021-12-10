@@ -7,46 +7,50 @@ import java.io.File;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static Services.StringUtils.convertEscapeCharacters;
+import static Services.FileHandler.read;
 
 public class Formatter {
-    final String URL = "https://www.tutorialspoint.com/online_java_formatter.htm";
-    final String filePath;
+    String URL = "https://www.tutorialspoint.com/";
+    private String script, language;
+    final private WebClient webClient;
 
-    public Formatter (String filePath) {
-        this.filePath = filePath;
+    /**
+     * @param language Truyền đúng cú pháp: java, python3, cpp, php, c
+     */
+    public Formatter (String script, String language) {
+        this.script = convertEscapeCharacters(script);
+
+        if (language.equals("python3"))
+            language = "python";
+        else if (language.equals("cpp"))
+            language= "c";
+        this.language = language;
+        this.URL = URL + "online_" + language + "_formatter.htm";
+        //System.out.println(this.URL);
+
+        webClient = new WebClient(BrowserVersion.CHROME);
+        webClient.getOptions().setCssEnabled(false);
+        Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
     }
 
     public String format() {
-        String formated = "";
-        String javaScriptCode;
-        Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
-        final WebClient webClient = new WebClient(BrowserVersion.CHROME);
-        webClient.getOptions().setCssEnabled(false);
+        String javaScriptCode, formated = "";
         try {
             final HtmlPage page = webClient.getPage(URL);
 
-            // Bốc lấy form uploadFile
-            Thread.sleep(4000); // Chờ page tải xong toàn bộ trang
-            final HtmlFileInput fileInput = page.getHtmlElementById("uploadFile");
-            File scriptFile = new File(filePath);
-            fileInput.setFiles(scriptFile);
-
-            //Xem đoạn script đã tải lên
-            Thread.sleep(3000); // Chờ page load xong file
-            javaScriptCode = "editor.getValue()";
-            page.executeJavaScript(javaScriptCode).getJavaScriptResult().toString();
-            //System.out.println(formated);
-
+            //Đẩy script lên
+            javaScriptCode = "editor.setValue('" + script + "')";
+            page.executeJavaScript(javaScriptCode);
 
             //Click nút format
             HtmlElement btn_Beautify = page.getHtmlElementById("beautify");
             btn_Beautify.click();
 
             //Lấy script formated
-            Thread.sleep(4000); // Chờ page thực thi format xong
+            webClient.waitForBackgroundJavaScript(2*1000); //Đợi page thực thi format
             javaScriptCode = "outputeditor.getValue()";
             formated = page.executeJavaScript(javaScriptCode).getJavaScriptResult().toString();
-            //System.out.println(formated);
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }
@@ -54,26 +58,26 @@ public class Formatter {
     }
 
     public static void main (String[] args) {
-//        long start = System.currentTimeMillis();
-//        Formatter formatter = new Formatter("demoFiles/helloName.java");
-//        System.out.println(System.currentTimeMillis() - start);
-
         // testcase
-        Formatter formatter = new Formatter("demoFiles/helloName.java");
+        Formatter formatter = new Formatter(read("demoFiles/helloName.java"), "java");
         StringTokenizer string;
         String temp;
-        for (int i=1; i<=100; i++) {
+        long totalTime = 0;
+        int times;
+        for (times=1; times<=100; times++) {
             long start = System.currentTimeMillis();
             string = new StringTokenizer(formatter.format(), "\n");
             temp = string.nextToken();
             temp = temp.substring(0, temp.length()-1);
             System.out.println(temp);
-            if (!temp.equals("import java.io.*;")) {
+            if (!temp.equals("import java.io.*")) { // So sánh với hàng đầu tiên của script đã truyền vào
                 System.out.println("false");
                 break;
             }
-            System.out.println(i + " " + (System.currentTimeMillis()-start));
+            long leftTime = System.currentTimeMillis()-start;
+            System.out.println(times + " " + leftTime);
+            totalTime += leftTime;
         }
-        System.out.println("Done");
+        System.out.println("average time: " + totalTime/times);
     }
 }
