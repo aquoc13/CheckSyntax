@@ -18,12 +18,13 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
 
 public class GUI extends MoveJFrame {
     private static final String CodeHolder = "Enter your source code here.";
     private static final String InputHolder = "Enter your input here.";
+    private static final String COPY_BEAUTY = "Copied from Beautifier code to clipboard.";
+    private static final String COPY_SOURCE = "Copied from Source code to clipboard.";
     private static String TextCounter;
 
     /**
@@ -177,8 +178,10 @@ public class GUI extends MoveJFrame {
         jLabel1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(!sourceCode.getText().equalsIgnoreCase(CodeHolder))
+                if(!sourceCode.getText().equalsIgnoreCase(CodeHolder)) {
                     StringUtils.copyToClipboard(sourceCode.getText());
+                    compiler.setText(COPY_SOURCE);
+                }
             }
         });
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 205, -1, 28));
@@ -234,15 +237,18 @@ public class GUI extends MoveJFrame {
             }
 
             public void countText() {
-                if (compiler.getText().isEmpty()
-                || compiler.getText().equalsIgnoreCase(TextCounter)) {
+                if ((compiler.getText().isEmpty()
+                || compiler.getText().equalsIgnoreCase(TextCounter)
+                || compiler.getText().equalsIgnoreCase(COPY_SOURCE)
+                || compiler.getText().equalsIgnoreCase(COPY_BEAUTY))
+                && !sourceCode.getText().equals(CodeHolder)) {
                     compiler.setForeground(Color.white);
                     int lineCount = StringUtils.getWrappedLines(sourceCode);
                     int textCount = sourceCode.getText().length();
                     int wordCount = sourceCode.getText().split("\\s").length;
-                    TextCounter = "Text: " + textCount + " / "
-                                + "Words: " + wordCount + " / "
-                                + "Lines: " + lineCount;
+                    TextCounter = "Col: " + textCount + " / "
+                                + "Word: " + wordCount + " / "
+                                + "Ln: " + lineCount;
                     compiler.setText(TextCounter);
                 }
             }
@@ -272,12 +278,15 @@ public class GUI extends MoveJFrame {
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 244, 466, 299));
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Prettifier Code");
+        jLabel2.setText("Beautifier code: ");
         jLabel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel2.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                StringUtils.copyToClipboard(prettifyCode.getText());
+                if (!prettifyCode.getText().isEmpty()) {
+                    StringUtils.copyToClipboard(prettifyCode.getText());
+                    compiler.setText(COPY_BEAUTY);
+                }
             }
         });
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(512, 210, -1, -1));

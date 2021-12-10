@@ -72,7 +72,8 @@ public class FileHandler {
 
             in.close();
             return builder.toString();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
             return ""; //trả về chuỗi null nếu không tải dữ liệu từ web
         }
     }

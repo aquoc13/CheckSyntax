@@ -16,6 +16,7 @@ public class ServerListener extends Thread implements Runnable{
     protected Socket socket;
     private final BufferedReader in;
     private final BufferedWriter out;
+    private final String IP;
     private final String fromIP;
 
     /**
@@ -26,9 +27,9 @@ public class ServerListener extends Thread implements Runnable{
         socket = clientSocket;
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-        fromIP = clientSocket.getInetAddress() //tách InetAddress từ socket
-                                  .getHostAddress() //in địa chỉ IP từ InetAddress của client kết nối tới
-                    + ":" + clientSocket.getPort(); //in port của client kết nối tới từ socket
+        IP = clientSocket.getInetAddress() //tách InetAddress từ socket
+                .getHostAddress(); //in địa chỉ IP từ InetAddress của client kết nối tới
+        fromIP = IP + ":" + clientSocket.getPort(); //in port của client kết nối tới từ socket
                                                     //vd: 127.0.0.1:5013
     }
 
@@ -85,17 +86,20 @@ public class ServerListener extends Thread implements Runnable{
         String verifyStatus = "Expired";
         do {
             user = new User(receive());
+            //check ban
+            if (Server.banList.containsKey(IP)
+                ||Server.banList.containsValue(user.getUID())) {
+                send("Banned");
+                close();
+                return;
+            }
+
             if (Server.users.contains(user)) {
                 for (User u : Server.users) {
                     if (u.equals(user)) {
                         user = u;
                         break;
                     }
-                }
-                if (user.getSecretKey().equalsIgnoreCase("Banned")) {
-                    send("Banned");
-                    close();
-                    return;
                 }
                 user.setSocket(socket);
                 user.setStatus("online");

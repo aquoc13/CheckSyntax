@@ -16,12 +16,17 @@ import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class Server {
+    public static final int MAIN_PORT = 5000;
+    public static final int VERIFY_PORT = 5005;
+
     public static ServerManagerGUI manager;
     protected static String keyStore_password;
 
@@ -38,11 +43,11 @@ public class Server {
     public static final int EXECUTOR_CAPACITY = 10;     //So luong hang cho
 
     public static final Set<User> users = new LinkedHashSet<>();
+    public static final HashMap<String, String> banList = new HashMap<>();
 
     private static ServerSocket serverSocket;
     private static SSLServerSocket sslServerSocket;
-    public static final int MAIN_PORT = 5000;
-    public static final int VERIFY_PORT = 5005;
+
     public static final String BREAK_CONNECT_KEY = "bye";
     private static final String KEY_STORE_NAME = "myKeyStore.jks";
     public static final String SERVER_SIDE_PATH = "workspace/Server.Side/";
@@ -77,13 +82,10 @@ public class Server {
     public static void open() throws IOException {
         addProvider();
         getKey(Server.keyStore_password);
-        try {
-            //SSLServerSocketFactory establishes the ssl context and creates SSLServerSocket
-            SSLServerSocketFactory sslServerSocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-            //Create SSLServerSocket using SSLServerSocketFactory established ssl context
-            sslServerSocket = (SSLServerSocket) sslServerSocketfactory.createServerSocket(VERIFY_PORT);
-        } catch (Exception ignored) {}
-
+        //SSLServerSocketFactory establishes the ssl context and creates SSLServerSocket
+        SSLServerSocketFactory sslServerSocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        //Create SSLServerSocket using SSLServerSocketFactory established ssl context
+        sslServerSocket = (SSLServerSocket) sslServerSocketfactory.createServerSocket(VERIFY_PORT);
         serverSocket = new ServerSocket(MAIN_PORT);
     }
 

@@ -21,6 +21,10 @@ import java.util.StringTokenizer;
 import java.util.UUID;
 
 public class Client {
+    public static final int MAIN_PORT = 5000;
+    public static final int VERIFY_PORT = 5005;
+    public static final String SERVER_IP = "localhost";
+
     public static GUI Frame;
     public static Thread Listener;
 
@@ -34,9 +38,6 @@ public class Client {
     public static DataInputStream inSSL;
     public static DataOutputStream outSSL;
 
-    public static final int MAIN_PORT = 5000;
-    public static final int VERIFY_PORT = 5005;
-    public static final String SERVER_IP = "localhost";
     public static final String TRUST_STORE_NAME = "myTrustStore.jts";
     public static final String FILE_CONFIG_NAME = "config";
     public static final String CLIENT_SIDE_PATH = "workspace/Client.Side/";
@@ -114,7 +115,13 @@ public class Client {
         do {
             send(UID); //Gửi UID để server kiểm tra
 
-            String verify = receive(); //Nhận kết quả kiểm tra từ Server
+            String verify = "Expired";
+            try {
+                verify = receive(); //Nhận kết quả kiểm tra từ Server
+            } catch (IllegalArgumentException e) {
+                throw new IOException();
+            }
+
             if (verify.equals("Banned")) {
                 Client.close();
                 Client.Frame.appendProcess("UID got banned.");
@@ -169,7 +176,11 @@ public class Client {
      * Gửi UID + secret key cho server để đăng ký phiên làm việc
      */
     private static void waitVerify() throws IOException {
-        inSSL.readUTF();
+        try {
+            inSSL.readUTF();
+        } catch (IllegalArgumentException e) {
+            throw new IOException();
+        }
     }
 
     public static void send(String data) throws IOException {
