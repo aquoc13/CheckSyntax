@@ -41,6 +41,7 @@ public class ClientListener extends Thread implements Runnable{
                             Client.Frame.compiler.setForeground(new Color(117, 236, 99));
 
                         Client.Frame.compiler.setText(serverPacket.getOutput() + "\n");
+                        Client.Frame.prettifyCode.setText(serverPacket.getFormat());
                         Client.Frame.compiler.append("Status code: " + serverPacket.getStatusCode() + "\n");
                         Client.Frame.compiler.append("Memory usage: " + serverPacket.getMemory() + "\n");
                         Client.Frame.compiler.append("CPU time: " + serverPacket.getCpuTime() + "\n");
@@ -48,6 +49,7 @@ public class ClientListener extends Thread implements Runnable{
 
                     case "FORMAT":
                         Client.Frame.prettifyCode.setText(serverPacket.getFormat() + "\n");
+                        Client.Frame.appendProcess("Formatted (" + serverPacket.getCpuTime() + "ms)\n");
                         break;
 
                     case "IMAGE":
@@ -58,7 +60,6 @@ public class ClientListener extends Thread implements Runnable{
                         Client.Frame.appendProcess("Server: " + serverPacket.getOutput());
                         break;
                 }
-
             }
         } catch (Exception e) {
             Client.close();

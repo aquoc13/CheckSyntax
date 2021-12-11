@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
+import java.util.concurrent.CountDownLatch;
 
 public class ServerListener extends Thread implements Runnable{
     protected User user;
@@ -18,6 +19,8 @@ public class ServerListener extends Thread implements Runnable{
     private final BufferedWriter out;
     private final String IP;
     private final String fromIP;
+
+    public static String formattedCode;
 
     /**
      * Tạo ra một thread mới để kết nối và xử lý yêu cầu từ phía Client
@@ -94,21 +97,24 @@ public class ServerListener extends Thread implements Runnable{
                 return;
             }
 
-            if (Server.users.contains(user)) {
-                for (User u : Server.users) {
-                    if (u.equals(user)) {
-                        user = u;
+            for (User u : Server.users) {
+                if (u.equals(user)) {
+                    if (u.getStatus().equalsIgnoreCase("online")) {
+                        verifyStatus = "Duplicated";
                         break;
                     }
+
+                    user = u;
+                    user.setSocket(socket);
+                    user.setStatus("online");
+                    if (!user.getSecretKey().equals("Expired"))
+                        verifyStatus = "Verified";
+                    break;
                 }
-                user.setSocket(socket);
-                user.setStatus("online");
-                if (!user.getSecretKey().equals("Expired"))
-                    verifyStatus = "Verified";
             }
 
             send(verifyStatus);
-        } while (verifyStatus.equals("Expired"));
+        } while (!verifyStatus.equals("Verified"));
         System.out.println("Client " + fromIP
                 + " - " + verifyStatus + " with ID: " + user.getUID()
                 + " | Key: " + user.getSecretKey());
@@ -174,7 +180,7 @@ public class ServerListener extends Thread implements Runnable{
      * @param dataPacket Gói dự liệu client
      * @return String - dữ liệu đã qua xử lý
      */
-    public String responseHandle(ClientDataPacket dataPacket, String secretKey) throws IOException {
+    public String responseHandle(ClientDataPacket dataPacket, String secretKey) throws IOException, InterruptedException {
         String description = dataPacket.getDescription();
         String format = "CODE";
         String output = "RESULT";
@@ -189,14 +195,30 @@ public class ServerListener extends Thread implements Runnable{
                 break;
 
             case "COMPILE":
+                Thread formatThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Formatter formatter = new Formatter(dataPacket.getScript(), dataPacket.getLanguage());
+                        formattedCode = formatter.format();
+                    }
+                });
+                formatThread.start();
+
                 Compiler compiler = new Compiler(dataPacket.getScript(), dataPacket.getStdin(), dataPacket.getLanguage());
                 output = compiler.compile();
                 statusCode = compiler.getStatusCode();
                 memory = compiler.getMemory();
                 cpuTime = compiler.getCpuTime();
+
+                formatThread.join();
+                format = formattedCode;
                 break;
 
             case "FORMAT":
+                Formatter formatter = new Formatter(dataPacket.getScript(), dataPacket.getLanguage());
+                long startTime = System.currentTimeMillis();
+                format = formatter.format();
+                cpuTime = String.valueOf(System.currentTimeMillis() - startTime);
                 break;
         }
 

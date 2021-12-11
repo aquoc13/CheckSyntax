@@ -452,6 +452,18 @@ public class GUI extends MoveJFrame {
      * Event nút Format
      */
     private void _btnFormatActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            int selectedIndex = selectedBox.getSelectedIndex();
+            String description = "FORMAT";
+            String language = Client.supportedLanguage[selectedIndex];
+            String script = sourceCode.getText().replace(CodeHolder,"");
+            String stdin = "";
+
+            String clientDataPacket = Client.requestHandle(description, language, stdin, script);
+            Client.send(clientDataPacket);
+        } catch (IOException | NullPointerException e) {
+            appendProcess(Client.FAIL_CONNECT);
+        }
     }
 
     /**
@@ -574,7 +586,7 @@ public class GUI extends MoveJFrame {
                     appendProcess("Open: " + DialogFile.latestFile);
 
                     String code = prettifyCode.getText();
-                    FileHandler.write(DialogFile.latestFile, code);
+                    FileHandler.write(DialogFile.latestFile, code, false);
                     appendProcess("Export success.");
                 }
                 frame.setEnabled(true);
@@ -604,7 +616,7 @@ public class GUI extends MoveJFrame {
     /**
      * Event nút RUN
      */
-    private void _btnRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event__btnRunActionPerformed
+    private void _btnRunActionPerformed(java.awt.event.ActionEvent evt) {
         this.setEnabled(false);
         try {
             int selectedIndex = selectedBox.getSelectedIndex();
@@ -629,7 +641,7 @@ public class GUI extends MoveJFrame {
             appendProcess(Client.SUCCESS_CONNECT);
         }
         this.setEnabled(true);
-    }//GEN-LAST:event__btnRunActionPerformed
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnDownload;
