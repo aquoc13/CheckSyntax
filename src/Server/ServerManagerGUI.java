@@ -122,7 +122,7 @@ public class ServerManagerGUI extends javax.swing.JFrame {
 
         jLabel2.setText("To IP/UID:");
 
-        _btnCheck.setIcon(new javax.swing.ImageIcon("image/check.png")); // NOI18N
+        _btnCheck.setIcon(new javax.swing.ImageIcon("image/check_icon.png")); // NOI18N
         _btnCheck.setFocusPainted(false);
         _btnCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
