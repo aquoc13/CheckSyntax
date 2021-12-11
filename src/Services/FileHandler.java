@@ -7,6 +7,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -50,6 +53,7 @@ public class FileHandler {
             fileInputStream.close();
             return builder.toString();
         } catch (IOException ignored) {
+            System.out.println("File not found !");
             return ""; //trả về chuỗi null nếu không thể đọc file
         }
     }
@@ -73,7 +77,7 @@ public class FileHandler {
             in.close();
             return builder.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Can't open website !");
             return ""; //trả về chuỗi null nếu không tải dữ liệu từ web
         }
     }
@@ -84,16 +88,20 @@ public class FileHandler {
      * @param data dữ liệu đầu vào kiểu String muốn viết vào FILE
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static void write(String path, String data) {
+    public static void write(String path, String data, boolean isAppend) {
         try {
             File yourFile = new File(path);
             yourFile.createNewFile(); //Tạo file nếu ko tồn tại
-            FileOutputStream fileOutputStream = new FileOutputStream(yourFile, false);
+            FileOutputStream fileOutputStream = new FileOutputStream(yourFile, isAppend);
             //Chuyễn dữ liệu kiểu String sang byte[] để viết vào file
+            if (isAppend)
+                data = "\n" + data;
             byte[] bytes = data.getBytes();
             fileOutputStream.write(bytes);
             fileOutputStream.close();
-        } catch (IOException ignored) {}
+        } catch (IOException e) {
+            System.out.println("File not found !");
+        }
     }
 
     /**

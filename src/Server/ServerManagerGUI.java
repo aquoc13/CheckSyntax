@@ -695,7 +695,7 @@ public class ServerManagerGUI extends javax.swing.JFrame {
         table.getColumnModel().getColumn(7).setPreferredWidth(70);
 
         jScrollPane.setViewportView(table);
-        jScrollPane.setPreferredSize(new Dimension(873,100));
+        jScrollPane.setPreferredSize(new Dimension(873,200));
         int result = JOptionPane.showConfirmDialog(this, jScrollPane, "User List", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         if (result == JOptionPane.YES_OPTION) {
             List<User> userList = new ArrayList<>(Server.users);

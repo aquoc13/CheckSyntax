@@ -39,7 +39,7 @@ public class Client {
     public static DataOutputStream outSSL;
 
     public static final String TRUST_STORE_NAME = "myTrustStore.jts";
-    public static final String FILE_CONFIG_NAME = "config";
+    public static final String FILE_CONFIG_NAME = "system.conf";
     public static final String CLIENT_SIDE_PATH = "workspace/Client.Side/";
     public static final String TRUST_STORE_PASSWORD = "checksyntax";
     public static final boolean SSL_DEBUG_ENABLE = false;
@@ -81,12 +81,12 @@ public class Client {
     /**
      * Tạo secretKey cho Client
      */
-    public static void create() {
+    public static void create(boolean isAppend) {
         secretKey = ClientKeyGenerator.create();
+        System.out.println("new Secret key: " + secretKey);
         String hash = StringUtils.applySha256(UID,secretKey);
         String config = UID + "|" + secretKey  + "|" + hash + "|" + LocalDateTime.now();
-        FileHandler.write(CLIENT_SIDE_PATH + FILE_CONFIG_NAME, config);
-        System.out.println("new Secret key: " + secretKey);
+        FileHandler.write(CLIENT_SIDE_PATH + FILE_CONFIG_NAME, config, isAppend);
     }
 
     private static void addProvider(String password) {
@@ -111,17 +111,12 @@ public class Client {
         out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
         boolean isVerified = false; //Đã đăng ký phiên làm việc thành công chưa
+        boolean isDuplicated = false;
         socket.setSoTimeout(10 * 1000);
         do {
             send(UID); //Gửi UID để server kiểm tra
 
-            String verify = "Expired";
-            try {
-                verify = receive(); //Nhận kết quả kiểm tra từ Server
-            } catch (IllegalArgumentException e) {
-                throw new IOException();
-            }
-
+            String verify = receive(); //Nhận kết quả kiểm tra từ Server
             if (verify.equals("Banned")) {
                 Client.close();
                 Client.Frame.appendProcess("UID got banned.");
@@ -131,11 +126,14 @@ public class Client {
                 System.out.println(verify + ": " + UID + " - Key: " + secretKey);
                 isVerified = true;
             }
-            else if (verify.equals("Expired")) { //Ko thông qua -> tạo UID và key mới thử lại
+            else { //Ko thông qua -> tạo UID và key mới thử lại
                 if (haveUID) {
                     System.out.println(verify + ": " + UID + " - Key: " + secretKey);
                 }
-
+                if (verify.equalsIgnoreCase("Duplicated")) {
+                    isDuplicated = true;
+                    UID = UUID.randomUUID().toString(); //Tạo UID cho Client;
+                }
 
                 //Tạo SSL socket để gửi UID và secretKey một cách an toàn
                 addProvider(TRUST_STORE_PASSWORD);
@@ -147,7 +145,7 @@ public class Client {
                 inSSL = new DataInputStream(sslSocket.getInputStream());
                 outSSL = new DataOutputStream(sslSocket.getOutputStream());
 
-                create(); //Tạo key mới
+                create(isDuplicated); //Tạo key mới
                 sendVerify(); //Gửi lại UID + key
                 waitVerify(); //chờ phản hồi ""
                 System.out.println("Sent " + UID + "|" + secretKey + " to server.");

@@ -2,4 +2,4 @@
 /.idea
 # Default ignored files
 /out
-workspace/Client.Side/config
+workspace/Client.Side/system.conf

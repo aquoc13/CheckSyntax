@@ -3,7 +3,6 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.*;
 
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static Services.StringUtils.convertEscapeCharacters;
@@ -11,7 +10,7 @@ import static Services.FileHandler.read;
 
 public class Formatter {
     String URL = "https://www.tutorialspoint.com/";
-    private String script, language;
+    private final String script;
     final private WebClient webClient;
 
     /**
@@ -24,7 +23,7 @@ public class Formatter {
             language = "python";
         else if (language.equals("cpp"))
             language= "c";
-        this.language = language;
+
         this.URL = URL + "online_" + language + "_formatter.htm";
         //System.out.println(this.URL);
 
@@ -34,7 +33,8 @@ public class Formatter {
     }
 
     public String format() {
-        String javaScriptCode, formated = "";
+        String javaScriptCode;
+        String formatted = "";
         try {
             final HtmlPage page = webClient.getPage(URL);
 
@@ -46,17 +46,17 @@ public class Formatter {
             HtmlElement btn_Beautify = page.getHtmlElementById("beautify");
             btn_Beautify.click();
 
-            //Lấy script formated
-            webClient.waitForBackgroundJavaScript(3*1000); //Đợi page thực thi format
+            //Lấy script formatted
+            webClient.waitForBackgroundJavaScript(3 * 1000); //Đợi page thực thi format
             javaScriptCode = "outputeditor.getValue()";
             do {
-                formated = page.executeJavaScript(javaScriptCode).getJavaScriptResult().toString();
-            } while (formated.equals("\n"));
+                formatted = page.executeJavaScript(javaScriptCode).getJavaScriptResult().toString();
+            } while (formatted.isBlank());
 
-        } catch (Exception ignore) {
-            ignore.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return formated;
+        return formatted;
     }
 
     // testcase
