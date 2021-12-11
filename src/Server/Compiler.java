@@ -152,7 +152,7 @@ public class Compiler {
 //
 //        System.out.println("java");
 //        compiler = new Compiler(
-//                read("demoFiles/sum.java"), "", "java");
+//                read("demoFiles/sum.php"), "", "php");
 //        System.out.println(compiler.compile());
 //        System.out.println("cpuTime: " + compiler.getCpuTime());
 //        System.out.println("memory: " + compiler.getMemory());
