@@ -79,7 +79,7 @@ public class DialogFile extends MoveJFrame {
         });
         jPanel1.add(_btnOK, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 110, 80, 44));
 
-        _btnOpenFile.setIcon(new javax.swing.ImageIcon("image/file-icon.png")); // NOI18N
+        _btnOpenFile.setIcon(new javax.swing.ImageIcon("image/more-icon.png")); // NOI18N
         _btnOpenFile.setFocusPainted(false);
         _btnOpenFile.setContentAreaFilled(false);
         _btnOpenFile.setBorderPainted(false);
