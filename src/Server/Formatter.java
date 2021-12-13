@@ -49,6 +49,7 @@ public class Formatter {
             //Lấy script formatted
             webClient.waitForBackgroundJavaScript(3 * 1000); //Đợi page thực thi format
             javaScriptCode = "outputeditor.getValue()";
+            //Lặp cho tới khi lấy code thành công.
             do {
                 formatted = page.executeJavaScript(javaScriptCode).getJavaScriptResult().toString();
             } while (formatted.isBlank());

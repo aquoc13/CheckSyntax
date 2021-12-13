@@ -6,7 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
-public class ClientKeyGenerator {
+public class SecretKeyGenerator {
     public static String secretKey;
     public static int KEY_BIT_LENGTH = 16; //secretKey phải 16 bit
 

@@ -26,8 +26,7 @@ public class Main {
         //Cấu trúc Client và kết nối tới Server
         try {
             Client.connectServer();
-        } catch (IOException e) { //Nếu kết nói thất bại
-            e.printStackTrace();
+        } catch (IOException ignored) { //Nếu kết nói thất bại
             Client.Frame.appendProcess(Client.FAIL_CONNECT);
             Client.Frame.appendProcess("Click RUN to reconnect !");
             Client.Frame.setEnabled(true);

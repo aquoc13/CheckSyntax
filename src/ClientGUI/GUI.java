@@ -1,8 +1,13 @@
 package ClientGUI;
 
 import Client.Client;
+import Client.ClientListener;
 import Services.FileHandler;
 import Services.StringUtils;
+import com.inet.jortho.FileUserDictionary;
+import com.inet.jortho.PopupListener;
+import com.inet.jortho.SpellChecker;
+import com.inet.jortho.SpellCheckerOptions;
 import org.drjekyll.fontchooser.FontDialog;
 import org.fife.rsta.ac.LanguageSupportFactory;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -15,7 +20,9 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Objects;
@@ -35,6 +42,22 @@ public class GUI extends MoveJFrame {
         setTitle("CheckSyntax");
         setLocationRelativeTo(null);
         setEnabled(false);
+
+        SpellChecker.setUserDictionaryProvider(new FileUserDictionary());
+        try {
+            SpellChecker.registerDictionaries(new File("dictionary/").toURI().toURL(), "en");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        SpellChecker.register(sourceCode);
+        SpellChecker.register(prettifyCode);
+
+        SpellCheckerOptions sco = new SpellCheckerOptions();
+        sco.setCaseSensitive(true);
+        sco.setSuggestionsLimitMenu(10);
+        JPopupMenu popup = SpellChecker.createCheckerPopup(sco);
+        sourceCode.addMouseListener(new PopupListener(popup));
+        prettifyCode.addMouseListener(new PopupListener(popup));
     }
     
     static boolean maximized = true;
@@ -440,6 +463,7 @@ public class GUI extends MoveJFrame {
      */
     private void closeMouseClicked(java.awt.event.MouseEvent evt) {
         try {
+            //kiểm tra nếu có kết nối thì phải gửi "bye" và close socket trước khi tắt giao diện
             if (Client.checkConnection()) {
                 Client.send(Client.BREAK_CONNECT_KEY);
                 Client.close();
@@ -453,14 +477,16 @@ public class GUI extends MoveJFrame {
      */
     private void _btnFormatActionPerformed(java.awt.event.ActionEvent evt) {
         try {
+            // lấy dữ liệu từ giao diện
             int selectedIndex = selectedBox.getSelectedIndex();
             String description = "FORMAT";
             String language = Client.supportedLanguage[selectedIndex];
             String script = sourceCode.getText().replace(CodeHolder,"");
             String stdin = "";
 
-            String clientDataPacket = Client.requestHandle(description, language, stdin, script);
-            Client.send(clientDataPacket);
+            //xử lý rồi đóng gói thành clientDataPacket dạng json.
+            Client.currentDataPacket = ClientListener.requestHandle(description, language, stdin, script);
+            Client.send(Client.currentDataPacket);
         } catch (IOException | NullPointerException e) {
             appendProcess(Client.FAIL_CONNECT);
         }
@@ -596,7 +622,7 @@ public class GUI extends MoveJFrame {
     }
 
     /**
-     * Event nút reset
+     * Event nút setting font
      */
     private void _btnRestartActionPerformed(java.awt.event.ActionEvent evt) {
         FontDialog dialog = new FontDialog(this, "Setting Fonts - CheckSyntax", true);
@@ -619,21 +645,26 @@ public class GUI extends MoveJFrame {
     private void _btnRunActionPerformed(java.awt.event.ActionEvent evt) {
         this.setEnabled(false);
         try {
+            //lấy dữ liệu từ giao diện
             int selectedIndex = selectedBox.getSelectedIndex();
             String description = "COMPILE";
             String language = Client.supportedLanguage[selectedIndex];
             String script = sourceCode.getText().replace(CodeHolder,"");
             String stdin = input.getText().replace(InputHolder,"");
 
-            String clientDataPacket = Client.requestHandle(description, language, stdin, script);
-            Client.send(clientDataPacket);
+            //xử lý và đóng gói thành clientDataPacket dạng json
+            String clientDataPacket = ClientListener.requestHandle(description, language, stdin, script);
+            Client.send(Client.currentDataPacket);
             System.out.println("Sent packet: " + clientDataPacket + "\n");
             appendProcess("Sent request.");
         } catch (IOException | NullPointerException e) {
+            //exception throw khi ko thể kết nói tối server.
             try {
+                //Thực hiện kết nối lại
                 Client.close();
                 Client.connectServer();
             } catch (IOException f) {
+                //Throw exception nếu kết nối lại thất bại
                 appendProcess(Client.FAIL_CONNECT);
                 this.setEnabled(true);
                 return;

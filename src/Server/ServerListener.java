@@ -4,13 +4,13 @@ import Client.ClientDataPacket;
 import Security.AES_Encryptor;
 import Services.StringUtils;
 import com.google.gson.JsonParser;
+import org.json.JSONException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
-import java.util.concurrent.CountDownLatch;
 
 public class ServerListener extends Thread implements Runnable{
     protected User user;
@@ -43,19 +43,38 @@ public class ServerListener extends Thread implements Runnable{
     public void run() {
         try {
             System.out.println("Client " + fromIP + " is connected.");
+
+            //Xử lý xác minh uid gửi từ Client trước khi cho phép trao đổi data.
             verify();
-            //Lặp liên tục để nhận request từ phía Client
+
+            //Lặp liên tục để nhận request từ phía Client.
             while(true) {
                 try {
                     //Chờ thông điệp từ Client rồi xử lý
                     String line = receive();
+                    if (line == null)
+                        continue;
 
+                    //Vòng lặp sẽ ngừng khi Client gửi lệnh "bye"
                     if (line.equals(Server.BREAK_CONNECT_KEY)) {
-                        break; //Vòng lặp sẽ ngừng khi Client gửi lệnh "bye"
+                        break;
                     }
+
+                    if (receive().equalsIgnoreCase("renewed")) {
+                        reloadUser(); //đọc lại user từ list user.
+                        send("");
+                        continue;
+                    }
+
                     System.out.println("Server get: " + line
                             + " from " + fromIP
                             + " - ID: " + user.getUID());
+
+                    if (user.getSecretKey().equalsIgnoreCase("expired")) {
+                        System.out.println("Secret Key of " + user.getUID() + ": " + user.getSecretKey());
+                        send("Expired");
+                        continue;
+                    }
 
                     //Xử lý dữ liệu bằng class ServerHandler method responseHandle
                     ClientDataPacket packet = requestHandle(line, user.getSecretKey());
@@ -63,10 +82,13 @@ public class ServerListener extends Thread implements Runnable{
 
                     // Server gửi phản hồi ngược lại cho client (chuỗi đảo ngược)
                     send(line);
+
                     System.out.println("Server response: " + line
                             + " to " + fromIP
                             + " - ID: " + user.getUID());
                 } catch (Exception e) {
+                    e.printStackTrace();
+                    //Có exception thì break vòng lặp để close socket.
                     break;
                 }
             }
@@ -74,7 +96,8 @@ public class ServerListener extends Thread implements Runnable{
             //Thực hiện đóng kết nối socket và đóng cổng đầu vào (in) + đầu ra (out).
             close();
             System.out.println("Server closed connection with " + fromIP + "- ID: " + user.getUID());
-        } catch (IOException | NullPointerException ignored) {
+        } catch (IOException | NullPointerException e) {
+            e.printStackTrace();
             //Thực hiện đóng kết nối socket và đóng cổng đầu vào (in) + đầu ra (out).
             try {
                 in.close();
@@ -89,7 +112,9 @@ public class ServerListener extends Thread implements Runnable{
         String verifyStatus = "Expired";
         do {
             user = new User(receive());
-            //check ban
+            //check xem user có status như nào: Expired, Online, Banned.
+
+            //check trong list ban.
             if (Server.banList.containsKey(IP)
                 ||Server.banList.containsValue(user.getUID())) {
                 send("Banned");
@@ -97,6 +122,7 @@ public class ServerListener extends Thread implements Runnable{
                 return;
             }
 
+            //check trong list user.
             for (User u : Server.users) {
                 if (u.equals(user)) {
                     if (u.getStatus().equalsIgnoreCase("online")) {
@@ -107,7 +133,7 @@ public class ServerListener extends Thread implements Runnable{
                     user = u;
                     user.setSocket(socket);
                     user.setStatus("online");
-                    if (!user.getSecretKey().equals("Expired"))
+                    if (!user.getSecretKey().equalsIgnoreCase("Expired"))
                         verifyStatus = "Verified";
                     break;
                 }
@@ -119,15 +145,28 @@ public class ServerListener extends Thread implements Runnable{
                 + " - " + verifyStatus + " with ID: " + user.getUID()
                 + " | Key: " + user.getSecretKey());
 
-        //For server manager (ignore)
-        recheckIfTargetAtManager();
+        //For server manager (bỏ qua)
+        recheckIfTargetAtManager(user);
     }
 
-    //For server manager (ignore)
-    private void recheckIfTargetAtManager() {
+    public void reloadUser() {
+        //check trong list user.
+        for (User u : Server.users) {
+            if (u.getUID().equals(user.getUID())) {
+                user = u;
+            }
+        }
+    }
+
+    //For server manager (bỏ qua)
+    public static void recheckIfTargetAtManager(User user) {
         String managerCurrentTarget = Server.manager.textField.getText();
+        String IP = user.getSocket()
+                .getInetAddress().getHostAddress()
+                + ":" + user.getSocket().getPort();
+        //vd: 127.0.0.1:5013
         if (managerCurrentTarget.equals(user.getUID())
-                || fromIP.contains(managerCurrentTarget)) {
+                || IP.contains(managerCurrentTarget)) {
             Server.manager._btnCheck.doClick();
         }
     }
@@ -153,14 +192,14 @@ public class ServerListener extends Thread implements Runnable{
     public void close() throws IOException {
         in.close();
         out.close();
-        //For server manager (ignore)
+        //For server manager (bỏ qua)
         if (user.getStatus().equals("online"))
             user.setStatus("offline");
 
         user.getSocket().close();
 
-        //For server manager (ignore)
-        recheckIfTargetAtManager();
+        //For server manager (bỏ qua)
+        recheckIfTargetAtManager(user);
     }
 
     /**

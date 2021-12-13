@@ -7,9 +7,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -94,8 +91,6 @@ public class FileHandler {
             yourFile.createNewFile(); //Tạo file nếu ko tồn tại
             FileOutputStream fileOutputStream = new FileOutputStream(yourFile, isAppend);
             //Chuyễn dữ liệu kiểu String sang byte[] để viết vào file
-            if (isAppend)
-                data = "\n" + data;
             byte[] bytes = data.getBytes();
             fileOutputStream.write(bytes);
             fileOutputStream.close();
