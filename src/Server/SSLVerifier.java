@@ -1,6 +1,6 @@
 package Server;
 
-import Security.ClientKeyGenerator;
+import Security.SecretKeyGenerator;
 
 import javax.net.ssl.SSLSocket;
 import java.io.DataInputStream;
@@ -40,14 +40,16 @@ public class SSLVerifier extends Thread implements Runnable {
             String uid = tokenizer.nextToken();
             uid = UUID.fromString(uid).toString();
             String secretKey = tokenizer.nextToken();
-            if (secretKey.length() != ClientKeyGenerator.KEY_BIT_LENGTH) //secretKey phải 16 bit
+            if (secretKey.length() != SecretKeyGenerator.KEY_BIT_LENGTH) //secretKey phải 16 bit
                 return;
 
+            //Tạo đối tượng user với uid và key vừa nhận
             User user = new User(uid);
             user.setSecretKey(secretKey);
             user.setModifiedDate(LocalDateTime.now().toString());
             user.setSessionTime(System.currentTimeMillis());
             user.setStatus("offline");
+            //Thêm mới user với uid và secretKey vừa nhận tùy vào user đó tồn tại hay chưa
             if (!Server.users.add(user)) {
                 for (User u : Server.users) {
                     if (u.equals(user)) {
@@ -58,6 +60,7 @@ public class SSLVerifier extends Thread implements Runnable {
                 }
             }
 
+            //phản hồi cho client là đã hoàn tất
             outSSL.writeUTF("");
 
             inSSL.close();

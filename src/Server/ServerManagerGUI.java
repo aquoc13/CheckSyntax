@@ -439,8 +439,8 @@ public class ServerManagerGUI extends javax.swing.JFrame {
         toUser.setSecretKey("Banned");
         toUser.setSessionTime(0);
         toUser.setStatus("banned");
-        Server.users.remove(toUser);
-        Server.users.add(toUser);
+        if (Server.users.remove(toUser))
+            Server.users.add(toUser);
 
         String getIP = toUser.getSocket().getInetAddress().getHostAddress();
         Server.banList.putIfAbsent(getIP, toUser.getUID());
@@ -615,8 +615,14 @@ public class ServerManagerGUI extends javax.swing.JFrame {
                 + ":" + toUser.getSocket().getPort());
 
         textField.setText(toUser.getUID());
-        if (toUser.getStatus().equals("online")) {
-            textField.setBackground(new Color(117, 236, 99));
+        textField.setForeground(Color.white);
+        if (toUser.getStatus().equalsIgnoreCase("online")) {
+            if (toUser.getSecretKey().equalsIgnoreCase("Expired")) {
+                textField.setBackground(new Color(231, 231, 60));
+                jLabel2.setText(jLabel2.getText() + " (Expired)");
+            }
+            else textField.setBackground(new Color(117, 236, 99));
+
             tutorial = tutorial_for_online;
             try {
                 enableExecute(true);
@@ -674,9 +680,19 @@ public class ServerManagerGUI extends javax.swing.JFrame {
             rowData[1] = u.getUID();
             rowData[2] = u.getSocket().getInetAddress().getHostAddress() + ":" + u.getSocket().getPort();
             rowData[3] = u.getSecretKey();
-            long time = 0;
-            if (u.getSessionTime()!=0)
-                time = TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - u.getSessionTime());
+            String time = "Over";
+            if (u.getSessionTime() != 0) {
+                long milliseconds = System.currentTimeMillis() - u.getSessionTime();
+                String minutes = String.valueOf(TimeUnit.MILLISECONDS.toMinutes(milliseconds));
+                String seconds = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60);
+                if (Integer.parseInt(minutes) < 10) {
+                    minutes = "0" + minutes;
+                }
+                if (Integer.parseInt(seconds) < 10) {
+                    seconds = "0" + seconds;
+                }
+                time = minutes + ":" + seconds;
+            }
             rowData[4] = time;
             rowData[5] = u.getStatus();
             rowData[6] = u.getModifiedDate();

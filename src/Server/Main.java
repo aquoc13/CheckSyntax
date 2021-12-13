@@ -43,7 +43,7 @@ public class Main {
         Server.timer.start();
 
         //Thread accept kết nối từ Client
-        Server.listener = new Thread(new Runnable() {
+        Server.accepter = new Thread(new Runnable() {
             @Override
             public void run() {
                 System.out.println("Server ready to accept connections.\n");
@@ -64,6 +64,6 @@ public class Main {
                 }
             }
         });
-        Server.listener.start();
+        Server.accepter.start();
     }
 }

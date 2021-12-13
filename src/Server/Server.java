@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -30,17 +29,17 @@ public class Server {
     public static ServerManagerGUI manager;
     protected static String keyStore_password;
 
-    public static Thread listener;
+    public static Thread accepter;
     public static Thread verifier;
     public static Thread timer;
     public static ExecutorService sslExecutor;
     public static ThreadPoolExecutor executor;
     public static final int TIMER_LOOP = 10;            //đơn vị phút
-    public static final int TIMER_SESSION = 60;         //đơn vị phút
+    public static final int TIMER_SESSION = 60;          //đơn vị phút
     public static final int EXECUTOR_CORE = 2;          //Số thread một lúc
     public static final int EXECUTOR_MAX = 5;           //số thread tối đa khi server quá tải
     public static final int EXECUTOR_ALIVE_TIME = 1;    //thời gian một thread được sống nếu không làm gì
-    public static final int EXECUTOR_CAPACITY = 10;     //So luong hang cho
+    public static final int EXECUTOR_CAPACITY = 10;     //Số lượng hàng chờ có thể chứa của executor
 
     public static final Set<User> users = new LinkedHashSet<>();
     public static final HashMap<String, String> banList = new HashMap<>();
@@ -58,6 +57,7 @@ public class Server {
 
     /**
      * Khai báo bảo mật cho SSL Socket với Java Secure Socket Extension
+     * Key Store: certificate và private ket, public key
      */
     private static void addProvider() {
         /*Adding the JSSE (Java Secure Socket Extension) provider which provides SSL and TLS protocols
@@ -82,9 +82,9 @@ public class Server {
     public static void open() throws IOException {
         addProvider();
         getKey(Server.keyStore_password);
-        //SSLServerSocketFactory establishes the ssl context and creates SSLServerSocket
+        //SSLSSocketFactory thiết lập the ssl context and tạo SSLSocket
         SSLServerSocketFactory sslServerSocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
-        //Create SSLServerSocket using SSLServerSocketFactory established ssl context
+        //Tạo SSLSocket bằng SSLServerFactory đã thiết lập ssl context và kết nối tới server
         sslServerSocket = (SSLServerSocket) sslServerSocketfactory.createServerSocket(VERIFY_PORT);
         serverSocket = new ServerSocket(MAIN_PORT);
     }
