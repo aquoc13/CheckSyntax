@@ -148,7 +148,7 @@ public class GUI extends MoveJFrame {
                 _btnFormatActionPerformed(evt);
             }
         });
-        jPanel1.add(_btnFormat, new org.netbeans.lib.awtextra.AbsoluteConstraints(847, 184, 131, 42));
+        jPanel1.add(_btnFormat, new org.netbeans.lib.awtextra.AbsoluteConstraints(846, 200, 131, 42));
 
         selectedBox.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
         selectedBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Java", "Python", "PHP", "C", "C++" }));
@@ -438,7 +438,7 @@ public class GUI extends MoveJFrame {
                 _btnFindReplaceActionPerformed(evt);
             }
         });
-        jPanel1.add(_btnFindReplace, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 200, 41, 40));
+        jPanel1.add(_btnFindReplace, new org.netbeans.lib.awtextra.AbsoluteConstraints(453, 200, 41, 40));
 
         _btnRestart.setBackground(new java.awt.Color(13, 21, 37));
         _btnRestart.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
