@@ -110,6 +110,7 @@ public class GUI extends MoveJFrame {
         jScrollPane5 = new javax.swing.JScrollPane();
         compiler = new javax.swing.JTextArea();
         jLabel5 = new javax.swing.JLabel();
+        _btnFindReplace = new javax.swing.JButton();
         _btnRestart = new javax.swing.JButton();
         background = new javax.swing.JLabel();
 
@@ -427,6 +428,17 @@ public class GUI extends MoveJFrame {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Process");
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(696, 678, -1, -1));
+        _btnFindReplace.setBackground(new java.awt.Color(13, 21, 37));
+        _btnFindReplace.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
+        _btnFindReplace.setForeground(new java.awt.Color(255, 255, 255));
+        _btnFindReplace.setIcon(new javax.swing.ImageIcon("image/find_replace.png")); // NOI18N
+        _btnFindReplace.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        _btnFindReplace.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnFindReplaceActionPerformed(evt);
+            }
+        });
+        jPanel1.add(_btnFindReplace, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 200, 41, 40));
 
         _btnRestart.setBackground(new java.awt.Color(13, 21, 37));
         _btnRestart.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
@@ -674,8 +686,16 @@ public class GUI extends MoveJFrame {
         this.setEnabled(true);
     }
 
+    /**
+     * Event nút Find and Replace
+     */
+    private void _btnFindReplaceActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnDownload;
+    private javax.swing.JButton _btnFindReplace;
     private javax.swing.JButton _btnFormat;
     private javax.swing.JButton _btnLink;
     private javax.swing.JButton _btnRestart;
