@@ -41,7 +41,7 @@ public class Client {
 
     public static List<String> uidStore;
     public static int line;
-    public static String currentDataPacket;
+    public static String currentData;
 
     public static final String TRUST_STORE_NAME = "myTrustStore.jts";
     public static final String FILE_CONFIG_NAME = "system.conf";

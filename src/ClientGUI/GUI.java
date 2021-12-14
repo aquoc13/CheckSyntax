@@ -28,11 +28,13 @@ import java.util.Calendar;
 import java.util.Objects;
 
 public class GUI extends MoveJFrame {
-    private static final String CodeHolder = "Enter your source code here.";
-    private static final String InputHolder = "Enter your input here.";
-    private static final String COPY_BEAUTY = "Copied from Beautifier code to clipboard.";
-    private static final String COPY_SOURCE = "Copied from Source code to clipboard.";
-    private static String TextCounter;
+    private static Editor editor;
+
+    public static final String CodeHolder = "Enter your source code here.";
+    public static final String InputHolder = "Enter your input here.";
+    public static final String COPY_BEAUTY = "Copied from Beautifier code to clipboard.";
+    public static final String COPY_SOURCE = "Copied from Source code to clipboard.";
+    public static String TextCounter = "Ready";
 
     /**
      * Creates new form GUI
@@ -42,6 +44,8 @@ public class GUI extends MoveJFrame {
         setTitle("CheckSyntax");
         setLocationRelativeTo(null);
         setEnabled(false);
+
+        LanguageSupportFactory.get().register(sourceCode);
 
         SpellChecker.setUserDictionaryProvider(new FileUserDictionary());
         try {
@@ -245,6 +249,7 @@ public class GUI extends MoveJFrame {
         sourceCode.setAutoIndentEnabled(true);
         sourceCode.setTabSize(3);
         sourceCode.setUseSelectedTextColor(true);
+        sourceCode.setMarkOccurrences(true);
         sourceCode.setHighlightCurrentLine(false);
         sourceCode.setText(CodeHolder);
         sourceCode.setForeground(new Color(162, 162, 162));
@@ -297,7 +302,6 @@ public class GUI extends MoveJFrame {
                 }
             }
         });
-        LanguageSupportFactory.get().register(sourceCode);
 
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 244, 466, 299));
 
@@ -480,7 +484,8 @@ public class GUI extends MoveJFrame {
                 Client.send(Client.BREAK_CONNECT_KEY);
                 Client.close();
             }
-        } catch (IOException ignored) {}
+            editor.dispose();
+        } catch (Exception ignored) {}
         this.dispose();
     }
 
@@ -497,8 +502,10 @@ public class GUI extends MoveJFrame {
             String stdin = "";
 
             //xử lý rồi đóng gói thành clientDataPacket dạng json.
-            Client.currentDataPacket = ClientListener.requestHandle(description, language, stdin, script);
-            Client.send(Client.currentDataPacket);
+            Client.currentData = ClientListener.requestHandle(description, language, stdin, script);
+            Client.send(Client.currentData);
+            System.out.println("Sent: " + Client.currentData + "\n");
+            appendProcess("Sent format request.");
         } catch (IOException | NullPointerException e) {
             appendProcess(Client.FAIL_CONNECT);
         }
@@ -517,7 +524,6 @@ public class GUI extends MoveJFrame {
         dialogUpFile.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
                 if (DialogFile.isOK() && !DialogFile.latestFile.isEmpty()) {
-                    process.append("\n");
                     DialogFile.latestFile = FileHandler.checkNullExtension(DialogFile.latestFile);
                     appendProcess("Open: " + DialogFile.latestFile);
 
@@ -569,7 +575,6 @@ public class GUI extends MoveJFrame {
         dialogLink.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
                 if (DialogLink.isOK() && !DialogLink.latestURL.isEmpty()) {
-                    process.append("\n");
                     String fileType = FileHandler.getFileExtension(DialogLink.latestURL);
                     appendProcess("Connect: " + DialogLink.latestURL + "");
 
@@ -619,7 +624,6 @@ public class GUI extends MoveJFrame {
         dialogSaveFile.addWindowListener(new WindowAdapter() {
             public void windowClosed(WindowEvent e) {
                 if (DialogFile.isOK() && !DialogFile.latestFile.isEmpty()) {
-                    process.append("\n");
                     DialogFile.latestFile = FileHandler.checkNullExtension(DialogFile.latestFile);
                     appendProcess("Open: " + DialogFile.latestFile);
 
@@ -642,7 +646,6 @@ public class GUI extends MoveJFrame {
         dialog.setLocationRelativeTo(null);
         dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         dialog.setIconImage(new ImageIcon("image/icon.png").getImage());
-        dialog.setBackground(new Color(13, 21, 37));
         dialog.setVisible(true);
         if (!dialog.isCancelSelected()) {
             sourceCode.setFont(dialog.getSelectedFont());
@@ -665,10 +668,10 @@ public class GUI extends MoveJFrame {
             String stdin = input.getText().replace(InputHolder,"");
 
             //xử lý và đóng gói thành clientDataPacket dạng json
-            String clientDataPacket = ClientListener.requestHandle(description, language, stdin, script);
-            Client.send(Client.currentDataPacket);
-            System.out.println("Sent packet: " + clientDataPacket + "\n");
-            appendProcess("Sent request.");
+            Client.currentData = ClientListener.requestHandle(description, language, stdin, script);
+            Client.send(Client.currentData);
+            System.out.println("Sent: " + Client.currentData + "\n");
+            appendProcess("Sent compile request.");
         } catch (IOException | NullPointerException e) {
             //exception throw khi ko thể kết nói tối server.
             try {
@@ -690,7 +693,13 @@ public class GUI extends MoveJFrame {
      * Event nút Find and Replace
      */
     private void _btnFindReplaceActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        sourceCode.setEnabled(false);
+        if (!(editor != null && editor.isDisplayable()))
+            editor = new Editor();
+        editor.setSourceLanguage(sourceCode.getSyntaxEditingStyle());
+        editor.setSourceCode(sourceCode.getText());
+        editor.setSourceFont(sourceCode.getFont());
+        editor.setVisible(true);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -711,8 +720,8 @@ public class GUI extends MoveJFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
-    private RTextScrollPane jScrollPane1;
-    private RTextScrollPane jScrollPane2;
+    public RTextScrollPane jScrollPane1;
+    public RTextScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;

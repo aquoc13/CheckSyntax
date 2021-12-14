@@ -49,7 +49,7 @@ public class ServerTimer extends Thread{
         }
         if (min == 0 || Server.users.isEmpty())
             min = loopTime;
-        System.out.println(min);
+        //System.out.println(min);
         return min;
     }
 
