@@ -19,10 +19,9 @@ public class ClientListener extends Thread implements Runnable{
         try {
             while (true) {
                 String response = Client.receive(); //Chờ thông điệp từ Server rồi xử lý
-                if (response == null)
-                    continue;
-
                 System.out.println("Receive packet: " + response + "\n");
+                if (response == null)
+                    break;
 
                 if (response.equalsIgnoreCase("Expired")) {
                     System.out.println("Secret Key of this Client expired. Try to make new...");
@@ -41,7 +40,7 @@ public class ClientListener extends Thread implements Runnable{
                     System.out.println("Sent " + Client.UID + "|" + Client.secretKey + " to server.");
                     Client.send("renewed");
                     Client.receive();
-                    Client.send(Client.currentDataPacket);
+                    Client.send(Client.currentData);
                     continue;
                 }
 

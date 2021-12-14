@@ -1,5 +1,6 @@
 package Server;
 
+import Client.Client;
 import Client.ClientDataPacket;
 import Security.AES_Encryptor;
 import Services.StringUtils;
@@ -52,23 +53,22 @@ public class ServerListener extends Thread implements Runnable{
                 try {
                     //Chờ thông điệp từ Client rồi xử lý
                     String line = receive();
+                    System.out.println("Server get: " + line
+                            + " from " + fromIP
+                            + " - ID: " + user.getUID());
                     if (line == null)
-                        continue;
+                        break;
 
                     //Vòng lặp sẽ ngừng khi Client gửi lệnh "bye"
                     if (line.equals(Server.BREAK_CONNECT_KEY)) {
                         break;
                     }
 
-                    if (receive().equalsIgnoreCase("renewed")) {
+                    if (line.equalsIgnoreCase("renewed")) {
                         reloadUser(); //đọc lại user từ list user.
                         send("");
                         continue;
                     }
-
-                    System.out.println("Server get: " + line
-                            + " from " + fromIP
-                            + " - ID: " + user.getUID());
 
                     if (user.getSecretKey().equalsIgnoreCase("expired")) {
                         System.out.println("Secret Key of " + user.getUID() + ": " + user.getSecretKey());
@@ -249,13 +249,15 @@ public class ServerListener extends Thread implements Runnable{
                 memory = compiler.getMemory();
                 cpuTime = compiler.getCpuTime();
 
+                //System.out.println(output);
+
                 formatThread.join();
                 format = formattedCode;
                 break;
 
             case "FORMAT":
-                Formatter formatter = new Formatter(dataPacket.getScript(), dataPacket.getLanguage());
                 long startTime = System.currentTimeMillis();
+                Formatter formatter = new Formatter(dataPacket.getScript(), dataPacket.getLanguage());
                 format = formatter.format();
                 cpuTime = String.valueOf(System.currentTimeMillis() - startTime);
                 break;

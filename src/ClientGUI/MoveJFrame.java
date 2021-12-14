@@ -41,8 +41,10 @@ class MoveJFrame extends JFrame {
         }
 
         public void mouseDragged(MouseEvent e) {
-            Point currCoords = e.getLocationOnScreen();
-            frame.setLocation(currCoords.x - mouseDownCompCoords.x, currCoords.y - mouseDownCompCoords.y);
+            try {
+                Point currCoords = e.getLocationOnScreen();
+                frame.setLocation(currCoords.x - mouseDownCompCoords.x, currCoords.y - mouseDownCompCoords.y);
+            } catch (Exception ignored) {}
         }
     }
 }

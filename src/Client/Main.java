@@ -1,9 +1,11 @@
 package Client;
 
 import ClientGUI.GUI;
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 
-import javax.swing.*;
 import java.io.IOException;
 
 public class Main {
@@ -12,10 +14,12 @@ public class Main {
 
         //Khởi tạo giao diện
         FlatIntelliJLaf.setup();
+        FlatLightLaf.installLafInfo();
+        FlatDarkLaf.installLafInfo();
+        FlatIntelliJLaf.installLafInfo();
+        FlatDarculaLaf.installLafInfo();
+
         Client.Frame = new GUI();
-        try {
-            UIManager.setLookAndFeel("Window");
-        } catch (Exception ignored) {}
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {

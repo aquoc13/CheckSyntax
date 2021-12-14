@@ -36,11 +36,18 @@ public class Formatter {
         String javaScriptCode;
         String formatted = "";
         try {
-            final HtmlPage page = webClient.getPage(URL);
+            HtmlPage page = null;
+            try {
+                page = webClient.getPage(URL);
+            } catch (Exception ignored) {
+                return format();
+            }
 
             //Đẩy script lên
             javaScriptCode = "editor.setValue('" + script + "')";
-            page.executeJavaScript(javaScriptCode);
+            if (page != null) {
+                page.executeJavaScript(javaScriptCode);
+            } else return format();
 
             //Click nút format
             HtmlElement btn_Beautify = page.getHtmlElementById("beautify");
@@ -51,6 +58,7 @@ public class Formatter {
             javaScriptCode = "outputeditor.getValue()";
             //Lặp cho tới khi lấy code thành công.
             do {
+                //System.out.println("try");
                 formatted = page.executeJavaScript(javaScriptCode).getJavaScriptResult().toString();
             } while (formatted.isBlank());
 
