@@ -162,6 +162,7 @@ public class GUI extends MoveJFrame {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
+                    System.out.println(selectedBox.getSelectedItem());
                     switch (Objects.requireNonNull(selectedBox.getSelectedItem()).toString()) {
                         case "Java":
                             sourceCode.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
@@ -514,7 +515,7 @@ public class GUI extends MoveJFrame {
                 public void run() {
                     prettifyCode.setEnabled(false);
                     Font currentFont = prettifyCode.getFont();
-                    prettifyCode.setFont(prettifyCode.getFont().deriveFont(Font.BOLD, 24));
+                    prettifyCode.setFont(prettifyCode.getFont().deriveFont(Font.BOLD, 20));
                     GUI.isFormatting = true;
                     int i = 1;
                     while (GUI.isFormatting) {
@@ -531,6 +532,7 @@ public class GUI extends MoveJFrame {
                     }
                     prettifyCode.setText("Done, apply text...");
                     prettifyCode.setFont(currentFont);
+                    prettifyCode.setEnabled(true);
                 }
             }).start();
         } catch (IOException | NullPointerException e) {
