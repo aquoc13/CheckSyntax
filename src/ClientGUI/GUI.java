@@ -35,6 +35,7 @@ public class GUI extends MoveJFrame {
     public static final String COPY_BEAUTY = "Copied from Beautifier code to clipboard.";
     public static final String COPY_SOURCE = "Copied from Source code to clipboard.";
     public static String TextCounter = "Ready";
+    public static boolean isFormatting;
 
     /**
      * Creates new form GUI
@@ -502,13 +503,44 @@ public class GUI extends MoveJFrame {
             String stdin = "";
 
             //xử lý rồi đóng gói thành clientDataPacket dạng json.
-            Client.currentData = ClientListener.requestHandle(description, language, stdin, script);
-            Client.send(Client.currentData);
-            System.out.println("Sent: " + Client.currentData + "\n");
+            String encrypt = ClientListener.requestHandle(description, language, stdin, script);
+            Client.send(encrypt);
+            System.out.println("Sent: " + Client.currentPacket + "\n");
             appendProcess("Sent format request.");
+
+            new Thread(new Runnable() {
+                @SuppressWarnings("BusyWait")
+                @Override
+                public void run() {
+                    prettifyCode.setEnabled(false);
+                    Font currentFont = prettifyCode.getFont();
+                    prettifyCode.setFont(prettifyCode.getFont().deriveFont(Font.BOLD, 24));
+                    GUI.isFormatting = true;
+                    int i = 1;
+                    while (GUI.isFormatting) {
+                        prettifyCode.setText(("Formatting" + i++)
+                                .replace("1",".")
+                                .replace("2","..")
+                                .replace("3","...")
+                                .replace("4","...."));
+                        if (i == 4)
+                            i = 1;
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ignored) {}
+                    }
+                    prettifyCode.setText("Done, apply text...");
+                    prettifyCode.setFont(currentFont);
+                }
+            }).start();
         } catch (IOException | NullPointerException e) {
             appendProcess(Client.FAIL_CONNECT);
         }
+    }
+
+    public static void finishFormat() {
+        if (isFormatting)
+            isFormatting = false;
     }
 
     /**
@@ -668,9 +700,9 @@ public class GUI extends MoveJFrame {
             String stdin = input.getText().replace(InputHolder,"");
 
             //xử lý và đóng gói thành clientDataPacket dạng json
-            Client.currentData = ClientListener.requestHandle(description, language, stdin, script);
-            Client.send(Client.currentData);
-            System.out.println("Sent: " + Client.currentData + "\n");
+            String encrypt = ClientListener.requestHandle(description, language, stdin, script);
+            Client.send(encrypt);
+            System.out.println("Sent: " + Client.currentPacket + "\n");
             appendProcess("Sent compile request.");
         } catch (IOException | NullPointerException e) {
             //exception throw khi ko thể kết nói tối server.
@@ -694,6 +726,9 @@ public class GUI extends MoveJFrame {
      */
     private void _btnFindReplaceActionPerformed(java.awt.event.ActionEvent evt) {
         sourceCode.setEnabled(false);
+        _btnUpFile1.setEnabled(false);
+        _btnLink.setEnabled(false);
+        selectedBox.setEnabled(false);
         if (!(editor != null && editor.isDisplayable()))
             editor = new Editor();
         editor.setSourceLanguage(sourceCode.getSyntaxEditingStyle());
@@ -706,10 +741,10 @@ public class GUI extends MoveJFrame {
     private javax.swing.JButton _btnDownload;
     private javax.swing.JButton _btnFindReplace;
     private javax.swing.JButton _btnFormat;
-    private javax.swing.JButton _btnLink;
+    public javax.swing.JButton _btnLink;
     private javax.swing.JButton _btnRestart;
     private javax.swing.JButton _btnRun;
-    private javax.swing.JButton _btnUpFile1;
+    public javax.swing.JButton _btnUpFile1;
     private javax.swing.JLabel background;
     private javax.swing.JLabel close;
     public javax.swing.JTextArea compiler;

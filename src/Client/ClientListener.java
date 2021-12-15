@@ -1,5 +1,6 @@
 package Client;
 
+import ClientGUI.GUI;
 import Security.AES_Encryptor;
 import Server.ServerDataPacket;
 
@@ -19,10 +20,10 @@ public class ClientListener extends Thread implements Runnable{
         try {
             while (true) {
                 String response = Client.receive(); //Chờ thông điệp từ Server rồi xử lý
-                System.out.println("Receive packet: " + response + "\n");
-                if (response == null)
-                    break;
+                if (response == null || response.isEmpty() || response.isBlank() || response.equals("wait"))
+                    continue;
 
+                System.out.println("Receive: " + response + "\n");
                 if (response.equalsIgnoreCase("Expired")) {
                     System.out.println("Secret Key of this Client expired. Try to make new...");
                     Client.create(Client.line);
@@ -39,8 +40,9 @@ public class ClientListener extends Thread implements Runnable{
 
                     System.out.println("Sent " + Client.UID + "|" + Client.secretKey + " to server.");
                     Client.send("renewed");
-                    Client.receive();
-                    Client.send(Client.currentData);
+                    ClientDataPacket packet = Client.currentPacket;
+                    String encrypt = requestHandle(packet.getDescription(), packet.getLanguage(), packet.getStdin(), packet.getScript());
+                    Client.send(encrypt);
                     continue;
                 }
 
@@ -67,15 +69,18 @@ public class ClientListener extends Thread implements Runnable{
                             Client.Frame.compiler.setForeground(new Color(117, 236, 99));
 
                         Client.Frame.compiler.setText(serverPacket.getOutput() + "\n");
-                        Client.Frame.prettifyCode.setText(serverPacket.getFormat());
                         Client.Frame.compiler.append("Status code: " + serverPacket.getStatusCode() + "\n");
                         Client.Frame.compiler.append("Memory usage: " + serverPacket.getMemory() + "\n");
                         Client.Frame.compiler.append("CPU time: " + serverPacket.getCpuTime() + "\n");
                         break;
 
                     case "FORMAT":
+                        GUI.finishFormat();
+                        //noinspection BusyWait
+                        Thread.sleep(500);
                         Client.Frame.prettifyCode.setText(serverPacket.getFormat() + "\n");
-                        Client.Frame.appendProcess("Formatted. (" + serverPacket.getCpuTime() + "ms)\n");
+                        Client.Frame.appendProcess("Formatted. (" + serverPacket.getCpuTime() + "ms)");
+                        Client.Frame.prettifyCode.setEnabled(true);
                         break;
 
                     case "IMAGE":
@@ -93,6 +98,8 @@ public class ClientListener extends Thread implements Runnable{
             System.out.println("Server closed.");
             Client.Frame.appendProcess("Disconnected.");
         }
+        Client.close();
+        Client.Frame.appendProcess("Client listener close. Restart");
     }
 
     /**
@@ -103,9 +110,9 @@ public class ClientListener extends Thread implements Runnable{
      * @return String - dữ liệu đã qua xử lý và mã hóa
      */
     public static String requestHandle(String description, String language, String stdin, String script) {
-        ClientDataPacket clientPacket = new ClientDataPacket(description, language,stdin,script);
-        System.out.println("Created client data packet:\n" + clientPacket.pack());
-        return AES_Encryptor.encrypt(clientPacket.pack(), Client.secretKey); //mã hóa bằng secret key trước khi gửi
+        Client.currentPacket = new ClientDataPacket(description, language,stdin,script);
+        System.out.println("Created client data packet:\n" + Client.currentPacket.pack());
+        return AES_Encryptor.encrypt(Client.currentPacket.pack(), Client.secretKey); //mã hóa bằng secret key trước khi gửi
     }
 
     /**

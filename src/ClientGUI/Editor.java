@@ -131,6 +131,9 @@ public final class Editor extends JFrame implements SearchListener {
 				Client.Frame.sourceCode.setText(code);
 				Client.Frame.sourceCode.setFont(textArea.getFont());
 				Client.Frame.sourceCode.setEnabled(true);
+				Client.Frame._btnUpFile1.setEnabled(true);
+				Client.Frame._btnLink.setEnabled(true);
+				Client.Frame.selectedBox.setEnabled(true);
 			}
 		});
 	}
