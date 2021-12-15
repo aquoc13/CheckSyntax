@@ -3,6 +3,7 @@ package Client;
 import ClientGUI.GUI;
 import Security.AES_Encryptor;
 import Server.ServerDataPacket;
+import Services.FileHandler;
 
 import java.awt.*;
 import java.io.IOException;
@@ -20,16 +21,20 @@ public class ClientListener extends Thread implements Runnable{
         try {
             while (true) {
                 String response = Client.receive(); //Chờ thông điệp từ Server rồi xử lý
+
                 if (response == null || response.isEmpty() || response.isBlank() || response.equals("wait"))
                     continue;
 
                 System.out.println("Receive: " + response + "\n");
+
                 if (response.equalsIgnoreCase("Expired")) {
                     System.out.println("Secret Key of this Client expired. Try to make new...");
+
+                    //Thực hiện xác minh lại vì key cũ đã quá hạn.
+                    //Tạo key mới
                     Client.create(Client.line);
                     //Thực hiện kết nối SSL socket tới server verifier.
                     Client.openVerify();
-
                     Client.sendVerify(); //Gửi lại UID + key
                     try {
                         Client.waitVerify(); //chờ phản hồi ""
@@ -37,9 +42,14 @@ public class ClientListener extends Thread implements Runnable{
                         e.printStackTrace();
                         throw new IOException("Server verifier not reply.");
                     }
-
                     System.out.println("Sent " + Client.UID + "|" + Client.secretKey + " to server.");
                     Client.send("renewed");
+                    //Sau khi xác minh thì viết lại list uid vào system.conf
+                    FileHandler.write(Client.CLIENT_SIDE_PATH + Client.FILE_CONFIG_NAME, "", false); //clear file trước.
+                    for (String s : Client.uidStore)
+                        FileHandler.write(Client.CLIENT_SIDE_PATH + Client.FILE_CONFIG_NAME, s + "\n", true);
+
+                    //Gửi lại dữ liệu được mã hóa với secret key mới
                     ClientDataPacket packet = Client.currentPacket;
                     String encrypt = requestHandle(packet.getDescription(), packet.getLanguage(), packet.getStdin(), packet.getScript());
                     Client.send(encrypt);
@@ -47,7 +57,7 @@ public class ClientListener extends Thread implements Runnable{
                 }
 
                 ServerDataPacket serverPacket = responseHandle(response);
-                System.out.println("Result:\n" + serverPacket.pack());
+                System.out.println("Result: " + serverPacket.pack());
 
                 //noinspection EnhancedSwitchMigration
                 switch (serverPacket.getDescription()) { //ĐỌc HEADER

@@ -1,11 +1,15 @@
 package Client;
 
 import ClientGUI.GUI;
+import com.apple.eawt.Application;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 
 public class Main {
@@ -18,6 +22,11 @@ public class Main {
         FlatDarkLaf.installLafInfo();
         FlatIntelliJLaf.installLafInfo();
         FlatDarculaLaf.installLafInfo();
+        try {
+            Image image = ImageIO.read(new File("image/icon.png"));
+            Application.getApplication().setDockIconImage(image);
+        } catch (IOException ignored) {}
+
 
         Client.Frame = new GUI();
         java.awt.EventQueue.invokeLater(new Runnable() {
