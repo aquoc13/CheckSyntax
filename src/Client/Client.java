@@ -41,7 +41,7 @@ public class Client {
 
     public static List<String> uidStore;
     public static int line;
-    public static String currentData;
+    public static ClientDataPacket currentPacket;
 
     public static final String TRUST_STORE_NAME = "myTrustStore.jts";
     public static final String FILE_CONFIG_NAME = "system.conf";
@@ -50,8 +50,8 @@ public class Client {
     public static final boolean SSL_DEBUG_ENABLE = false;
     public static final String[] supportedLanguage = new String[] { "java", "python3", "php", "c", "cpp" };
     public static final String BREAK_CONNECT_KEY = "bye";
-    public static final String SUCCESS_CONNECT = "Connected.";
-    public static final String FAIL_CONNECT = "Server closed.";
+    public static final String SUCCESS_CONNECT = "Connected";
+    public static final String FAIL_CONNECT = "Server closed";
 
     /**
      * Load UID và secretKey cho Client tạo mới nếu chưa tồn tại

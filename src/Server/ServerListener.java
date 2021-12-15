@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ServerListener extends Thread implements Runnable{
     protected User user;
@@ -21,7 +23,7 @@ public class ServerListener extends Thread implements Runnable{
     private final String IP;
     private final String fromIP;
 
-    public static String formattedCode;
+    private final ExecutorService formatExecutors = Executors.newSingleThreadExecutor();;
 
     /**
      * Tạo ra một thread mới để kết nối và xử lý yêu cầu từ phía Client
@@ -53,12 +55,12 @@ public class ServerListener extends Thread implements Runnable{
                 try {
                     //Chờ thông điệp từ Client rồi xử lý
                     String line = receive();
+                    if (line == null || line.isEmpty() || line.isBlank())
+                        continue;
+
                     System.out.println("Server get: " + line
                             + " from " + fromIP
                             + " - ID: " + user.getUID());
-                    if (line == null)
-                        break;
-
                     //Vòng lặp sẽ ngừng khi Client gửi lệnh "bye"
                     if (line.equals(Server.BREAK_CONNECT_KEY)) {
                         break;
@@ -66,7 +68,7 @@ public class ServerListener extends Thread implements Runnable{
 
                     if (line.equalsIgnoreCase("renewed")) {
                         reloadUser(); //đọc lại user từ list user.
-                        send("");
+                        recheckIfTargetAtManager(user);//For server manager (bỏ qua)
                         continue;
                     }
 
@@ -234,33 +236,37 @@ public class ServerListener extends Thread implements Runnable{
                 break;
 
             case "COMPILE":
-                Thread formatThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Formatter formatter = new Formatter(dataPacket.getScript(), dataPacket.getLanguage());
-                        formattedCode = formatter.format();
-                    }
-                });
-                formatThread.start();
-
                 Compiler compiler = new Compiler(dataPacket.getScript(), dataPacket.getStdin(), dataPacket.getLanguage());
                 output = compiler.compile();
                 statusCode = compiler.getStatusCode();
                 memory = compiler.getMemory();
                 cpuTime = compiler.getCpuTime();
-
-                //System.out.println(output);
-
-                formatThread.join();
-                format = formattedCode;
                 break;
 
             case "FORMAT":
-                long startTime = System.currentTimeMillis();
-                Formatter formatter = new Formatter(dataPacket.getScript(), dataPacket.getLanguage());
-                format = formatter.format();
-                cpuTime = String.valueOf(System.currentTimeMillis() - startTime);
-                break;
+                formatExecutors.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        long startTime = System.currentTimeMillis();
+                        Formatter formatter = new Formatter(dataPacket.getScript(), dataPacket.getLanguage());
+                        String format = formatter.format();
+                        String cpuTime = String.valueOf(System.currentTimeMillis() - startTime);
+                        ServerDataPacket serverPacket = new ServerDataPacket(
+                                        "FORMAT", format, "RESULT", "000", "1 thread", cpuTime);
+                        user.addResponseList(JsonParser.parseString(serverPacket.pack()).toString());
+                        try {
+                            String data = AES_Encryptor.encrypt(serverPacket.pack(), secretKey);
+                            send(data);
+                            System.out.println("Server response: " + data
+                                    + " to " + fromIP
+                                    + " - ID: " + user.getUID());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            System.out.println("failed format");
+                        }
+                    }
+                });
+                return "wait";
         }
 
         ServerDataPacket serverPacket = new ServerDataPacket(description, format, output, statusCode, memory, cpuTime);
