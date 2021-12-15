@@ -107,6 +107,7 @@ public class GUI extends MoveJFrame {
         _btnLink = new javax.swing.JButton();
         _btnDownload = new javax.swing.JButton();
         _btnRun = new javax.swing.JButton();
+        _btnReset = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         input = new javax.swing.JTextArea();
         jLabel4 = new javax.swing.JLabel();
@@ -349,7 +350,7 @@ public class GUI extends MoveJFrame {
                 _btnDownloadActionPerformed(evt);
             }
         });
-        jPanel1.add(_btnDownload, new org.netbeans.lib.awtextra.AbsoluteConstraints(884, 577, 41, 40));
+        jPanel1.add(_btnDownload, new org.netbeans.lib.awtextra.AbsoluteConstraints(892, 577, 41, 40));
 
         _btnRun.setBackground(new java.awt.Color(4, 74, 21));
         _btnRun.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
@@ -363,7 +364,7 @@ public class GUI extends MoveJFrame {
                 _btnRunActionPerformed(evt);
             }
         });
-        jPanel1.add(_btnRun, new org.netbeans.lib.awtextra.AbsoluteConstraints(721, 577, 98, 40));
+        jPanel1.add(_btnRun, new org.netbeans.lib.awtextra.AbsoluteConstraints(695, 577, 98, 40));
 
         input.setBackground(new java.awt.Color(45, 55, 74));
         input.setColumns(20);
@@ -457,7 +458,19 @@ public class GUI extends MoveJFrame {
                 _btnRestartActionPerformed(evt);
             }
         });
-        jPanel1.add(_btnRestart, new org.netbeans.lib.awtextra.AbsoluteConstraints(831, 577, 41, 40));
+        jPanel1.add(_btnRestart, new org.netbeans.lib.awtextra.AbsoluteConstraints(846, 577, 41, 40));
+
+        _btnReset.setBackground(new java.awt.Color(13, 21, 37));
+        _btnReset.setFont(new java.awt.Font("Roboto", 0, 16)); // NOI18N
+        _btnReset.setForeground(new java.awt.Color(255, 255, 255));
+        _btnReset.setIcon(new javax.swing.ImageIcon("image/restart_alt.png")); // NOI18N
+        _btnReset.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        _btnReset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                _btnResetActionPerformed(evt);
+            }
+        });
+        jPanel1.add(_btnReset, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 577, 41, 40));
 
         background.setIcon(new javax.swing.ImageIcon("image/background.png")); // NOI18N
         jPanel1.add(background, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -739,11 +752,25 @@ public class GUI extends MoveJFrame {
         editor.setVisible(true);
     }
 
+    /**
+     * Event nút Reset
+     */
+    private void _btnResetActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        sourceCode.setText(CodeHolder);
+        sourceCode.setForeground(new Color(162, 162, 162));
+        prettifyCode.setText("");
+        input.setText(InputHolder);
+        compiler.setText("");
+        compiler.setForeground(Color.white);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton _btnDownload;
     private javax.swing.JButton _btnFindReplace;
     private javax.swing.JButton _btnFormat;
     public javax.swing.JButton _btnLink;
+    private javax.swing.JButton _btnReset;
     private javax.swing.JButton _btnRestart;
     private javax.swing.JButton _btnRun;
     public javax.swing.JButton _btnUpFile1;
