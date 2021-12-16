@@ -130,6 +130,8 @@ public class Server {
             System.out.println("--- Certificate END ---\n");
             System.out.println("Public key: " + StringUtils.getStringFromKey(cert.getPublicKey()));
             System.out.println("Private key: " + StringUtils.getStringFromKey(key));
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

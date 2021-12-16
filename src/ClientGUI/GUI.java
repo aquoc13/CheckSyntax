@@ -587,7 +587,8 @@ public class GUI extends MoveJFrame {
                         try {
                             Client.sendImage(DialogFile.latestFile);
                             DialogFile.latestFile = DialogFile.latestFile.replace(".jpg","");
-                        } catch (IOException ignored) {
+                        } catch (IOException f) {
+                            f.printStackTrace();
                             appendProcess("Import fail: Cant convert image.");
                             frame.setEnabled(true);
                             frame.toFront();
@@ -756,11 +757,11 @@ public class GUI extends MoveJFrame {
      * Event nút Reset
      */
     private void _btnResetActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
         sourceCode.setText(CodeHolder);
         sourceCode.setForeground(new Color(162, 162, 162));
         prettifyCode.setText("");
         input.setText(InputHolder);
+        input.setForeground(new Color(182, 182, 182));
         compiler.setText("");
         compiler.setForeground(Color.white);
     }

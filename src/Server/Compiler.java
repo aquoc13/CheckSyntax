@@ -36,7 +36,9 @@ public class Compiler {
                     + "\",\"stdin\":\"" + stdin
                     + "\",\"language\":\"" + language
                     + "\",\"versionIndex\":\"" + versionIndex + "\"} ";
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -75,7 +77,9 @@ public class Compiler {
                 memory = jsonObject.get("memory").toString();
                 cpuTime = jsonObject.get("cpuTime").toString();
             }
-        } catch (JSONException ignored) {}
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         JdoodleConnection.disconnect();
         return console;
@@ -126,7 +130,9 @@ public class Compiler {
                 used = jsonObject.get("used").toString();
             }
 
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return used;
     }
 

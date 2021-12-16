@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * @author danganhquoc
  */
 public class ServerManagerGUI extends javax.swing.JFrame {
-    private static final Image icon = new ImageIcon("image/server_icon.png").getImage();;
+    private static final Image icon = new ImageIcon("image/server_icon.png").getImage();
     private User toUser;
     private boolean lockEvent = false;
     private String tutorial;
@@ -598,12 +598,10 @@ public class ServerManagerGUI extends javax.swing.JFrame {
         tutorial = tutorial_for_all;
         messageArea.setForeground(new Color(142, 142, 142));
         messageArea.setText(tutorial);
-        try {
-            if (toUser != null) {
-                toUser = null;
-                enableExecute(false);
-            }
-        } catch (IOException ignored) {}
+        if (toUser != null) {
+            toUser = null;
+            enableExecute(false);
+        }
     }
 
     private void apply() {
@@ -624,9 +622,7 @@ public class ServerManagerGUI extends javax.swing.JFrame {
             else textField.setBackground(new Color(117, 236, 99));
 
             tutorial = tutorial_for_online;
-            try {
-                enableExecute(true);
-            } catch (IOException ignored) {}
+            enableExecute(true);
         } else {
             textField.setBackground(new Color(231, 76, 60));
             tutorial = tutorial_for_offline;
@@ -636,7 +632,7 @@ public class ServerManagerGUI extends javax.swing.JFrame {
         lockEvent = false;
     }
 
-    private void enableExecute(boolean isEnable) throws IOException {
+    private void enableExecute(boolean isEnable) {
         if (isEnable) {
             _btnExecute.setEnabled(true);
             _btnList.setEnabled(true);

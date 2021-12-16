@@ -106,7 +106,7 @@ public class ServerListener extends Thread implements Runnable{
                 out.close();
                 socket.close();
                 System.out.println("Server closed connection with " + fromIP + ".");
-            } catch (IOException ignored1) {}
+            } catch (IOException ignored) {}
         }
     }
 

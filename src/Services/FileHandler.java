@@ -49,7 +49,8 @@ public class FileHandler {
             scanner.close();
             fileInputStream.close();
             return builder.toString();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
             System.out.println("File not found !");
             return ""; //trả về chuỗi null nếu không thể đọc file
         }
@@ -74,6 +75,7 @@ public class FileHandler {
             in.close();
             return builder.toString();
         } catch (IOException e) {
+            e.printStackTrace();
             System.out.println("Can't open website !");
             return ""; //trả về chuỗi null nếu không tải dữ liệu từ web
         }
@@ -95,6 +97,7 @@ public class FileHandler {
             fileOutputStream.write(bytes);
             fileOutputStream.close();
         } catch (IOException e) {
+            e.printStackTrace();
             System.out.println("File not found !");
         }
     }

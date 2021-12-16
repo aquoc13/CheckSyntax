@@ -34,7 +34,9 @@ public class ServerTimer extends Thread{
                     } else break;
                 }
             }
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public long minSessionTime() {

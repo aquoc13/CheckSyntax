@@ -105,7 +105,8 @@ public class StringUtils {
                 sb.append(Integer.toString((aByte & 0xff) + 0x100, 16).substring(1));
             hashString = sb.toString();
         }
-        catch (NoSuchAlgorithmException ignored) {
+        catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
             return "";
         }
         return hashString;
