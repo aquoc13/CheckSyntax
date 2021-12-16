@@ -25,7 +25,7 @@ public class Main {
         try {
             Image image = ImageIO.read(new File("image/icon.png"));
             Application.getApplication().setDockIconImage(image);
-        } catch (IOException ignored) {}
+        } catch (Exception ignored) {}
 
 
         Client.Frame = new GUI();

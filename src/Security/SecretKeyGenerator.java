@@ -22,7 +22,8 @@ public class SecretKeyGenerator {
                 secretKey = Long.toHexString(ByteBuffer.wrap(salt.digest()).getLong());
             } while (secretKey.length() != KEY_BIT_LENGTH);
             return secretKey;
-        } catch (NoSuchAlgorithmException ignored) {
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
             return "0x00000000000000";
         }
     }

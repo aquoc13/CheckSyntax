@@ -36,10 +36,10 @@ public class Formatter {
         String javaScriptCode;
         String formatted = "";
         try {
-            HtmlPage page = null;
+            HtmlPage page;
             try {
                 page = webClient.getPage(URL);
-            } catch (Exception ignored) {
+            } catch (Exception e) {
                 return format();
             }
 

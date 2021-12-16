@@ -211,6 +211,7 @@ public class Client {
         try {
             inSSL.readUTF();
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             throw new IOException();
         }
     }
@@ -230,7 +231,9 @@ public class Client {
             in.close();
             out.close();
             socket.close();
-        } catch (Exception ignored) {}
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void sendImage(String path) throws IOException {

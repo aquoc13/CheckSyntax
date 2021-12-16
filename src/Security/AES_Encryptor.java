@@ -20,7 +20,8 @@ public class AES_Encryptor {
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
             byte[] byteEncrypted = cipher.doFinal(plaintext.getBytes());
             return Base64.getEncoder().encodeToString(byteEncrypted);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return "";
         }
     }
@@ -40,7 +41,8 @@ public class AES_Encryptor {
             cipher.init(Cipher.DECRYPT_MODE, skeySpec);
             byte[] byteDecrypted = cipher.doFinal(byteEncrypted);
             return new String(byteDecrypted);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return "";
         }
     }
