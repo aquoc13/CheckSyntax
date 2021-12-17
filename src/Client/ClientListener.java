@@ -7,7 +7,6 @@ import Services.FileHandler;
 
 import java.awt.*;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 
 /**
  * Tạo ra một thread mới để kết nối và xử lý lắng nghe từ phía Server
@@ -33,17 +32,22 @@ public class ClientListener extends Thread implements Runnable{
                     //Thực hiện xác minh lại vì key cũ đã quá hạn.
                     //Tạo key mới
                     Client.create(Client.line);
-                    //Thực hiện kết nối SSL socket tới server verifier.
-                    Client.openVerify();
-                    Client.sendVerify(); //Gửi lại UID + key
-                    try {
-                        Client.waitVerify(); //chờ phản hồi ""
-                    } catch (SocketTimeoutException e) {
-                        e.printStackTrace();
-                        throw new IOException("Server verifier not reply.");
-                    }
+
                     System.out.println("Sent " + Client.UID + "|" + Client.secretKey + " to server.");
+                    try {
+                        //Thực hiện kết nối SSL socket tới server verifier.
+                        Client.openVerify();
+                        Client.sendVerify(); //Gửi lại UID + key
+                        Client.waitVerify(); //chờ phản hồi ""
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.out.println("Server verifier not reply !");
+                        Client.close();
+                        throw new IOException();
+                    }
+
                     Client.send("renewed");
+
                     //Sau khi xác minh thì viết lại list uid vào system.conf
                     FileHandler.write(Client.CLIENT_SIDE_PATH + Client.FILE_CONFIG_NAME, "", false); //clear file trước.
                     for (String s : Client.uidStore)
@@ -89,7 +93,7 @@ public class ClientListener extends Thread implements Runnable{
                         //noinspection BusyWait
                         Thread.sleep(500);
                         Client.Frame.prettifyCode.setText(serverPacket.getFormat() + "\n");
-                        Client.Frame.appendProcess("Formatted. (" + serverPacket.getCpuTime() + "ms)");
+                        Client.Frame.appendProcess("Formatted (" + serverPacket.getCpuTime() + "ms)");
                         Client.Frame.prettifyCode.setEnabled(true);
                         break;
 
@@ -105,8 +109,8 @@ public class ClientListener extends Thread implements Runnable{
         } catch (Exception e) {
             e.printStackTrace();
             Client.close();
-            System.out.println("Server closed.");
-            Client.Frame.appendProcess("Disconnected.");
+            System.out.println("Server closed");
+            Client.Frame.appendProcess("Disconnected");
         }
         Client.close();
         Client.Frame.appendProcess("Client listener close. Restart");
