@@ -25,27 +25,27 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Server {
     public static final int MAIN_PORT = 5000;
     public static final int VERIFY_PORT = 5005;
+    private static ServerSocket serverSocket;
+    private static SSLServerSocket sslServerSocket;
 
     public static ServerManagerGUI manager;
     protected static String keyStore_password;
 
     public static Thread accepter;
     public static Thread verifier;
+    public static final Set<User> users = new LinkedHashSet<>();
+    public static final HashMap<String, String> banList = new HashMap<>();
+
     public static Thread timer;
-    public static ExecutorService sslExecutor;
-    public static ThreadPoolExecutor executor;
     public static final int TIMER_LOOP = 10;            //đơn vị phút
     public static final int TIMER_SESSION = 60;          //đơn vị phút
+
+    public static ExecutorService sslExecutor;
+    public static ThreadPoolExecutor executor;
     public static final int EXECUTOR_CORE = 2;          //Số thread một lúc
     public static final int EXECUTOR_MAX = 5;           //số thread tối đa khi server quá tải
     public static final int EXECUTOR_ALIVE_TIME = 1;    //thời gian một thread được sống nếu không làm gì
     public static final int EXECUTOR_CAPACITY = 10;     //Số lượng hàng chờ có thể chứa của executor
-
-    public static final Set<User> users = new LinkedHashSet<>();
-    public static final HashMap<String, String> banList = new HashMap<>();
-
-    private static ServerSocket serverSocket;
-    private static SSLServerSocket sslServerSocket;
 
     public static final String BREAK_CONNECT_KEY = "bye";
     private static final String KEY_STORE_NAME = "myKeyStore.jks";

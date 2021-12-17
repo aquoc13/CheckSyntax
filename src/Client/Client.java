@@ -1,9 +1,7 @@
 package Client;
 
 import ClientGUI.GUI;
-import Security.AES_Encryptor;
 import Security.SecretKeyGenerator;
-import Server.ServerDataPacket;
 import Services.FileHandler;
 import Services.StringUtils;
 import org.openeuler.com.sun.net.ssl.internal.ssl.Provider;
@@ -14,12 +12,10 @@ import javax.net.ssl.SSLSocketFactory;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.Security;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.TimeoutException;
 
 public class Client {
     public static final int MAIN_PORT = 5000;
@@ -151,21 +147,23 @@ public class Client {
                     if (verify.equalsIgnoreCase("Duplicated")) {
                         line++;
                         config(line);
-                    }
+                    } else create(line);
                 } else line = uidStore.size(); //list hết UID vd có 3 uid 0,1,2 thì set index line ở 3(theo size())
 
-                //Thực hiện kết nối SSL socket tới server verifier.
-                openVerify();
-
-                sendVerify(); //Gửi lại UID + key
-                try {
-                    waitVerify(); //chờ phản hồi ""
-                } catch (SocketTimeoutException e) {
-                    e.printStackTrace();
-                    throw new IOException("Server verifier not reply.");
-                }
-
                 System.out.println("Sent " + UID + "|" + secretKey + " to server.");
+                try {
+                    //Thực hiện kết nối SSL socket tới server verifier.
+                    openVerify();
+
+                    sendVerify(); //Gửi lại UID + key
+
+                    waitVerify(); //chờ phản hồi ""
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.out.println("Server verifier not reply !");
+                    socket = null;
+                    throw new IOException();
+                }
             }
         } while (!isVerified);
 
