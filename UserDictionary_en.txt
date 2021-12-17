@@ -63,3 +63,6 @@ auto-completed
 php
 World
 This
+MyClass
+temp2
+Instructor
