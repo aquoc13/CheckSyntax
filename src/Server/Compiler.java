@@ -6,7 +6,6 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import static Services.StringUtils.convertEscapeCharacters;
-import static Services.FileHandler.read;
 
 public class Compiler {
     private HttpURLConnection JdoodleConnection;
@@ -106,16 +105,16 @@ public class Compiler {
     /**
      * @return Số lần còn lại có thể gọi API
      */
-    public String getCreditSpent() {
+    public static String getCreditSpent() {
         String used = "";
         try {
             URL url = new URL("https://api.jdoodle.com/v1/credit-spent");
-            JdoodleConnection = (HttpURLConnection) url.openConnection();
+            HttpURLConnection JdoodleConnection = (HttpURLConnection) url.openConnection();
             JdoodleConnection.setDoOutput(true);
             JdoodleConnection.setRequestMethod("POST");
             JdoodleConnection.setRequestProperty("Content-Type", "application/json");
 
-            request = "{\"clientId\": \"" + clientId
+            String request = "{\"clientId\": \"" + clientId
                     + "\",\"clientSecret\":\"" + clientSecret + "\"} ";
 
             OutputStream outputStream = JdoodleConnection.getOutputStream();

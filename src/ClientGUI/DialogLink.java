@@ -20,6 +20,7 @@ public class DialogLink extends MoveJFrame {
     public DialogLink() {
         initComponents();
         setTitle("Search link - CheckSyntax");
+        setAlwaysOnTop(true);
     }
 
     public static boolean isOK() {

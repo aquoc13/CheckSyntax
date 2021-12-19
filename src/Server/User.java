@@ -14,7 +14,7 @@ public class User {
     private final ArrayList<String> responseList;
     private final ArrayList<String> dateList;
 
-    public User(String UID) {
+    public User(String UID) throws IllegalArgumentException{
         this.UID = UUID.fromString(UID).toString();
         requestList = new ArrayList<>();
         responseList = new ArrayList<>();

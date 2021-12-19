@@ -66,6 +66,10 @@ public class ClientListener extends Thread implements Runnable{
                 //noinspection EnhancedSwitchMigration
                 switch (serverPacket.getDescription()) { //ĐỌc HEADER
                     case "COMPILE":
+                        GUI.finishCompile();
+                        //noinspection BusyWait
+                        Thread.sleep(500);
+
                         String output = serverPacket.getOutput().toLowerCase();
                         boolean isError = false;
                         //check syntax output
@@ -86,12 +90,14 @@ public class ClientListener extends Thread implements Runnable{
                         Client.Frame.compiler.append("Status code: " + serverPacket.getStatusCode() + "\n");
                         Client.Frame.compiler.append("Memory usage: " + serverPacket.getMemory() + "\n");
                         Client.Frame.compiler.append("CPU time: " + serverPacket.getCpuTime() + "\n");
+                        Client.Frame.compiler.setEnabled(true);
                         break;
 
                     case "FORMAT":
                         GUI.finishFormat();
                         //noinspection BusyWait
                         Thread.sleep(500);
+
                         Client.Frame.prettifyCode.setText(serverPacket.getFormat() + "\n");
                         Client.Frame.appendProcess("Formatted (" + serverPacket.getCpuTime() + "ms)");
                         Client.Frame.prettifyCode.setEnabled(true);
@@ -107,7 +113,6 @@ public class ClientListener extends Thread implements Runnable{
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             Client.close();
             System.out.println("Server closed");
             Client.Frame.appendProcess("Disconnected");

@@ -26,7 +26,7 @@ public class Main {
     public static void run() {
         try {
             Server.open();
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
         }
 

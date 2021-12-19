@@ -17,6 +17,7 @@ public class DialogFile extends MoveJFrame {
     public DialogFile() {
         initComponents();
         setTitle("Choose file - CheckSyntax");
+        setAlwaysOnTop(true);
     }
 
     public static boolean isOK() {
