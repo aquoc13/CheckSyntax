@@ -1,11 +1,9 @@
 package Server;
 
-import Client.Client;
 import Client.ClientDataPacket;
 import Security.AES_Encryptor;
 import Services.StringUtils;
 import com.google.gson.JsonParser;
-import org.json.JSONException;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -72,8 +70,8 @@ public class ServerListener extends Thread implements Runnable{
                         continue;
                     }
 
-                    if (user.getSecretKey().equalsIgnoreCase("expired")) {
-                        System.out.println("Secret Key of " + user.getUID() + ": " + user.getSecretKey());
+                    if (user.getSessionTime() == -1) {
+                        System.out.println("Secret Key of " + user.getUID() + " expired !");
                         send("Expired");
                         continue;
                     }
@@ -99,7 +97,6 @@ public class ServerListener extends Thread implements Runnable{
             close();
             System.out.println("Server closed connection with " + fromIP + "- ID: " + user.getUID());
         } catch (IOException | NullPointerException e) {
-            e.printStackTrace();
             //Thực hiện đóng kết nối socket và đóng cổng đầu vào (in) + đầu ra (out).
             try {
                 in.close();
@@ -113,9 +110,14 @@ public class ServerListener extends Thread implements Runnable{
     private void verify() throws IOException, NullPointerException {
         String verifyStatus = "Expired";
         do {
-            user = new User(receive());
-            //check xem user có status như nào: Expired, Online, Banned.
+            try {
+                user = new User(receive());
+            } catch (IllegalArgumentException e) {
+                send(verifyStatus);
+                continue;
+            }
 
+            //check xem user có status như nào: Expired, Online, Banned.
             //check trong list ban.
             if (Server.banList.containsKey(IP)
                 ||Server.banList.containsValue(user.getUID())) {
@@ -135,7 +137,7 @@ public class ServerListener extends Thread implements Runnable{
                     user = u;
                     user.setSocket(socket);
                     user.setStatus("online");
-                    if (!user.getSecretKey().equalsIgnoreCase("Expired"))
+                    if (user.getSessionTime() != -1)
                         verifyStatus = "Verified";
                     break;
                 }
@@ -173,7 +175,7 @@ public class ServerListener extends Thread implements Runnable{
         }
     }
 
-    public void send(String data) throws IOException {
+    public void send(String data) throws IOException, NullPointerException {
         out.write(data);
         out.newLine();
         out.flush();
@@ -191,7 +193,7 @@ public class ServerListener extends Thread implements Runnable{
         return path;
     }
 
-    public void close() throws IOException {
+    public void close() throws IOException, NullPointerException {
         in.close();
         out.close();
         //For server manager (bỏ qua)
@@ -221,7 +223,7 @@ public class ServerListener extends Thread implements Runnable{
      * @param dataPacket Gói dự liệu client
      * @return String - dữ liệu đã qua xử lý
      */
-    public String responseHandle(ClientDataPacket dataPacket, String secretKey) throws IOException, InterruptedException {
+    public String responseHandle(ClientDataPacket dataPacket, String secretKey) throws IOException, NullPointerException, InterruptedException {
         String description = dataPacket.getDescription();
         String format = "CODE";
         String output = "RESULT";
@@ -260,7 +262,7 @@ public class ServerListener extends Thread implements Runnable{
                             System.out.println("Server response: " + data
                                     + " to " + fromIP
                                     + " - ID: " + user.getUID());
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                             System.out.println("failed format");
                         }

@@ -37,8 +37,8 @@ public class Server {
     public static final HashMap<String, String> banList = new HashMap<>();
 
     public static Thread timer;
-    public static final int TIMER_LOOP = 10;            //đơn vị phút
-    public static final int TIMER_SESSION = 60;          //đơn vị phút
+    public static final float TIMER_LOOP = 10f;         //đơn vị phút
+    public static final float TIMER_SESSION = 60f;      //đơn vị phút
 
     public static ExecutorService sslExecutor;
     public static ThreadPoolExecutor executor;
@@ -69,7 +69,7 @@ public class Server {
         System.setProperty("javax.net.ssl.keyStore", SERVER_SIDE_PATH + KEY_STORE_NAME);
 
         //specifing the password of the keystore file
-        System.setProperty("javax.net.ssl.keyStorePassword", Server.keyStore_password);
+        System.setProperty("javax.net.ssl.keyStorePassword", keyStore_password);
 
         //This optional and it is just to show the dump of the details of the handshake process
         if (SSL_DEBUG_ENABLE)
@@ -79,35 +79,36 @@ public class Server {
     /**
      * Mở server
      */
-    public static void open() throws IOException {
+    public static void open() throws IOException, NullPointerException {
         addProvider();
-        getKey(Server.keyStore_password);
+        getKey();
         //SSLSSocketFactory thiết lập the ssl context and tạo SSLSocket
         SSLServerSocketFactory sslServerSocketfactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+
         //Tạo SSLSocket bằng SSLServerFactory đã thiết lập ssl context và kết nối tới server
         sslServerSocket = (SSLServerSocket) sslServerSocketfactory.createServerSocket(VERIFY_PORT);
+
         serverSocket = new ServerSocket(MAIN_PORT);
     }
 
     /**
      * Chờ chứng chỉ từ Client
      */
-    public static SSLSocket verifyClient() throws IOException {
+    public static SSLSocket verifyClient() throws IOException, NullPointerException {
         return (SSLSocket) sslServerSocket.accept();
     }
 
     /**
      * Chờ Client kết nối tới
      */
-    public static Socket acceptClient() throws IOException {
+    public static Socket acceptClient() throws IOException, NullPointerException {
         return serverSocket.accept();
     }
 
-    public static String messageHandle(String header, String body, User to) throws IOException {
-        /*switch (header) { //ĐỌc HEADER
-            case "CHAT":
-                break;
-        }*/
+    /**
+     * Gửi message đến Client
+     */
+    public static String messageHandle(String header, String body, User to) {
         ServerDataPacket serverPacket = new ServerDataPacket(header, "", body, "", "", "");
         to.addRequestList(JsonParser.parseString("{ \"Description\": \"server chat\" }").toString());
         to.addResponseList(JsonParser.parseString(serverPacket.pack()).toString());
@@ -117,13 +118,12 @@ public class Server {
 
     /**
      * Lấy chứng chỉ, public key, private key từ Key Store myKeyStore.jks
-     * @param password mật khẩu
      */
-    private static void getKey(String password) {
+    private static void getKey() {
         try {
             KeyStore ks = KeyStore.getInstance("jks");
-            ks.load(new FileInputStream(SERVER_SIDE_PATH + KEY_STORE_NAME), Server.keyStore_password.toCharArray());
-            Key key = ks.getKey(KEY_STORE_ALIAS, Server.keyStore_password.toCharArray());
+            ks.load(new FileInputStream(SERVER_SIDE_PATH + KEY_STORE_NAME), keyStore_password.toCharArray());
+            Key key = ks.getKey(KEY_STORE_ALIAS, keyStore_password.toCharArray());
             final Certificate cert = ks.getCertificate("mykey");
             System.out.println("--- Certificate START ---");
             System.out.println(cert);

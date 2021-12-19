@@ -22,9 +22,6 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author danganhquoc
- */
 public class ServerManagerGUI extends javax.swing.JFrame {
     private static final Image icon = new ImageIcon("image/server_icon.png").getImage();
     private User toUser;
@@ -35,7 +32,8 @@ public class ServerManagerGUI extends javax.swing.JFrame {
             + "Command (for all): \n"
             + "#ALL message... - Chat all.\n"
             + "#CLEAR - Clear all user history.\n"
-            + "#STOP - Stop all user.";
+            + "#STOP - Stop all user.\n"
+            + "#SPENT.";
 
     private final String tutorial_for_online = "Enter message or command ...\n\n"
             + "Command (for online): \n"
@@ -368,6 +366,10 @@ public class ServerManagerGUI extends javax.swing.JFrame {
                         jLabel1.setText("STOPPED !");
                         break;
 
+                    case "#SPENT":
+                        jLabel1.setText("API: " + Compiler.getCreditSpent() + " / 200");
+                        break;
+
                     default:
                         jLabel1.setText("WRONG !");
                         break;
@@ -416,7 +418,7 @@ public class ServerManagerGUI extends javax.swing.JFrame {
             out.write(packet);
             out.newLine();
             out.flush();
-        } catch (IOException ignored) {}
+        } catch (Exception ignored) {}
     }
 
     private void stopAllUser() {
@@ -436,8 +438,7 @@ public class ServerManagerGUI extends javax.swing.JFrame {
             return;
         sendChat("u got banned.", toUser);
         stopUser(toUser);
-        toUser.setSecretKey("Banned");
-        toUser.setSessionTime(0);
+        toUser.setSessionTime(-1);
         toUser.setStatus("banned");
         if (Server.users.remove(toUser))
             Server.users.add(toUser);
@@ -449,7 +450,7 @@ public class ServerManagerGUI extends javax.swing.JFrame {
     private void unbanUser() {
         if (!toUser.getStatus().equals("banned"))
             return;
-        toUser.setSecretKey("Expired");
+        toUser.setSessionTime(-1);
         toUser.setStatus("offline");
         String getIP = toUser.getSocket().getInetAddress().getHostAddress();
         Server.banList.remove(getIP);
@@ -615,7 +616,7 @@ public class ServerManagerGUI extends javax.swing.JFrame {
         textField.setText(toUser.getUID());
         textField.setForeground(Color.white);
         if (toUser.getStatus().equalsIgnoreCase("online")) {
-            if (toUser.getSecretKey().equalsIgnoreCase("Expired")) {
+            if (toUser.getSessionTime() == -1) {
                 textField.setBackground(new Color(231, 231, 60));
                 jLabel2.setText(jLabel2.getText() + " (Expired)");
             }
@@ -677,7 +678,7 @@ public class ServerManagerGUI extends javax.swing.JFrame {
             rowData[2] = u.getSocket().getInetAddress().getHostAddress() + ":" + u.getSocket().getPort();
             rowData[3] = u.getSecretKey();
             String time = "Over";
-            if (u.getSessionTime() != 0) {
+            if (u.getSessionTime() != -1) {
                 long milliseconds = System.currentTimeMillis() - u.getSessionTime();
                 String minutes = String.valueOf(TimeUnit.MILLISECONDS.toMinutes(milliseconds));
                 String seconds = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60);

@@ -1,7 +1,7 @@
 package Client;
 
 import ClientGUI.GUI;
-import Security.SecretKeyGenerator;
+import Security.AES_Encryptor;
 import Services.FileHandler;
 import Services.StringUtils;
 import org.openeuler.com.sun.net.ssl.internal.ssl.Provider;
@@ -44,7 +44,7 @@ public class Client {
     public static final String CLIENT_SIDE_PATH = "workspace/Client.Side/";
     public static final String TRUST_STORE_PASSWORD = "checksyntax";
     public static final boolean SSL_DEBUG_ENABLE = false;
-    public static final String[] supportedLanguage = new String[] { "java", "python3", "php", "c", "cpp" };
+    public static final String[] supportedLanguage = new String[] { "java", "python2", "php", "c", "cpp" };
     public static final String BREAK_CONNECT_KEY = "bye";
     public static final String SUCCESS_CONNECT = "Connected";
     public static final String FAIL_CONNECT = "Server closed";
@@ -89,7 +89,7 @@ public class Client {
      * Tạo secretKey cho Client
      */
     public static void create(int index) {
-        secretKey = SecretKeyGenerator.create();
+        secretKey = AES_Encryptor.generate();
         System.out.println("new Secret key: " + secretKey);
         String hash = StringUtils.applySha256(UID,secretKey);
         String config = UID + "|" + secretKey  + "|" + hash + "|" + LocalDateTime.now();
@@ -101,7 +101,7 @@ public class Client {
     }
 
     //Trust Store: certificate và public key
-    private static void addProvider(String password) {
+    private static void addProvider() {
         /*Adding the JSSE (Java Secure Socket Extension) provider which provides SSL and TLS protocols
         and includes functionality for data encryption, server authentication, message integrity,
         and optional client authentication.*/
@@ -109,13 +109,13 @@ public class Client {
         //specifing the trustStore file which contains the certificate & public of the server
         System.setProperty("javax.net.ssl.trustStore", CLIENT_SIDE_PATH + TRUST_STORE_NAME);
         //specifing the password of the trustStore file
-        System.setProperty("javax.net.ssl.trustStorePassword", password);
+        System.setProperty("javax.net.ssl.trustStorePassword", TRUST_STORE_PASSWORD);
         //This optional and it is just to show the dump of the details of the handshake process
         if (SSL_DEBUG_ENABLE)
             System.setProperty("javax.net.debug","all");
     }
 
-    public static void connectServer() throws IOException {
+    public static void connectServer() throws IOException, NullPointerException {
         socket = new Socket(SERVER_IP, MAIN_PORT);
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -183,9 +183,9 @@ public class Client {
         return socket != null;
     }
 
-    public static void openVerify() throws IOException {
+    public static void openVerify() throws IOException, NullPointerException {
         //Tạo SSL socket để gửi UID và secretKey một cách an toàn
-        addProvider(TRUST_STORE_PASSWORD);
+        addProvider();
         //SSLSSocketFactory thiết lập the ssl context and tạo SSLSocket
         sslsocketfactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
         //Tạo SSLSocket bằng SSLServerFactory đã thiết lập ssl context và kết nối tới server
@@ -198,14 +198,14 @@ public class Client {
     /**
      * Gửi UID + secret key cho server để đăng ký phiên làm việc
      */
-    public static void sendVerify() throws IOException {
+    public static void sendVerify() throws IOException, NullPointerException {
         outSSL.writeUTF(UID + "|" + secretKey);
     }
 
     /**
      * Gửi UID + secret key cho server để đăng ký phiên làm việc
      */
-    public static void waitVerify() throws IOException {
+    public static void waitVerify() throws IOException, NullPointerException {
         try {
             inSSL.readUTF();
         } catch (IllegalArgumentException e) {
@@ -214,7 +214,7 @@ public class Client {
         }
     }
 
-    public static void send(String data) throws IOException {
+    public static void send(String data) throws IOException, NullPointerException {
         out.write(data);
         out.newLine();
         out.flush();
@@ -229,12 +229,10 @@ public class Client {
             in.close();
             out.close();
             socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) {}
     }
 
-    public static void sendImage(String path) throws IOException {
+    public static void sendImage(String path) throws IOException, NullPointerException {
         BufferedImage image;
         if (FileHandler.isWebURL(path))
             image = ImageIO.read(new URL(path));

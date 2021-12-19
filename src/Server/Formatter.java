@@ -6,7 +6,6 @@ import com.gargoylesoftware.htmlunit.html.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static Services.StringUtils.convertEscapeCharacters;
-import static Services.FileHandler.read;
 
 public class Formatter {
     String URL = "https://www.tutorialspoint.com/";

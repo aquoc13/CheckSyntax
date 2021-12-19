@@ -36,6 +36,7 @@ public class GUI extends MoveJFrame {
     public static final String COPY_SOURCE = "Copied from Source code to clipboard.";
     public static String TextCounter = "Ready";
     public static boolean isFormatting;
+    public static boolean isCompiling;
 
     /**
      * Creates new form GUI
@@ -423,10 +424,10 @@ public class GUI extends MoveJFrame {
 
         compiler.setBackground(new java.awt.Color(27, 35, 51));
         compiler.setColumns(20);
-        compiler.setForeground(new java.awt.Color(255, 255, 255));
+        compiler.setForeground(Color.white);
         compiler.setRows(5);
         compiler.setEditable(false);
-        compiler.setFont(new Font("Consolas", 0, 14));
+        compiler.setFont(new Font("Consolas", Font.PLAIN, 14));
         compiler.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         jScrollPane5.setViewportView(compiler);
 
@@ -520,7 +521,7 @@ public class GUI extends MoveJFrame {
             String encrypt = ClientListener.requestHandle(description, language, stdin, script);
             Client.send(encrypt);
             System.out.println("Sent: " + Client.currentPacket + "\n");
-            appendProcess("Sent format request.");
+            appendProcess("Sent format request");
 
             new Thread(new Runnable() {
                 @SuppressWarnings("BusyWait")
@@ -558,6 +559,11 @@ public class GUI extends MoveJFrame {
             isFormatting = false;
     }
 
+    public static void finishCompile() {
+        if (isCompiling)
+            isCompiling = false;
+    }
+
     /**
      * Event nút upload file
      */
@@ -581,15 +587,15 @@ public class GUI extends MoveJFrame {
                         int typeIndex = Arrays.asList(FileHandler.supportedExtension).indexOf(fileType);
                         selectedBox.setSelectedIndex(typeIndex);
                     }
-                    else appendProcess("File language isn't supported.");
+                    else appendProcess("File language isn't supported");
 
                     if (fileType.equals("jpg")) {
                         try {
                             Client.sendImage(DialogFile.latestFile);
                             DialogFile.latestFile = DialogFile.latestFile.replace(".jpg","");
-                        } catch (IOException f) {
+                        } catch (Exception f) {
                             f.printStackTrace();
-                            appendProcess("Import fail: Cant convert image.");
+                            appendProcess("Import fail: Cant convert image");
                             frame.setEnabled(true);
                             frame.toFront();
                         }
@@ -599,9 +605,9 @@ public class GUI extends MoveJFrame {
                         if (!code.isEmpty()) {
                             sourceCode.setText(code);
                             sourceCode.setForeground(Color.black);
-                            appendProcess("Import success.");
+                            appendProcess("Import success");
                         }
-                        else appendProcess("Import fail: File empty.");
+                        else appendProcess("Import fail: File empty");
                     }
                 }
                 frame.setEnabled(true);
@@ -624,14 +630,14 @@ public class GUI extends MoveJFrame {
             public void windowClosed(WindowEvent e) {
                 if (DialogLink.isOK() && !DialogLink.latestURL.isEmpty()) {
                     String fileType = FileHandler.getFileExtension(DialogLink.latestURL);
-                    appendProcess("Connect: " + DialogLink.latestURL + "");
+                    appendProcess("Connect: " + DialogLink.latestURL);
 
                     if (!fileType.equals("jpg")
                             && Arrays.asList(FileHandler.supportedExtension).contains(fileType)) {
                         int typeIndex = Arrays.asList(FileHandler.supportedExtension).indexOf(fileType);
                         selectedBox.setSelectedIndex(typeIndex);
                     }
-                    else appendProcess("File language isn't supported." + "");
+                    else appendProcess("File language isn't supported");
 
                     if (fileType.equals("jpg")) {
                         try {
@@ -639,7 +645,7 @@ public class GUI extends MoveJFrame {
                             DialogLink.latestURL = DialogLink.latestURL.replace(".jpg","");
                         } catch (IOException f) {
                             f.printStackTrace();
-                            appendProcess("Import fail: Cant convert web image.");
+                            appendProcess("Import fail: Can't convert web image");
                             frame.setEnabled(true);
                             frame.toFront();
                         }
@@ -649,8 +655,8 @@ public class GUI extends MoveJFrame {
                         if (!code.isEmpty()) {
                             sourceCode.setText(code);
                             sourceCode.setForeground(Color.black);
-                            appendProcess("Import success." + "");
-                        } else appendProcess("Import fail: Web empty." + "");
+                            appendProcess("Import success");
+                        } else appendProcess("Import fail: Web empty");
                     }
                 }
                 frame.setEnabled(true);
@@ -677,7 +683,7 @@ public class GUI extends MoveJFrame {
 
                     String code = prettifyCode.getText();
                     FileHandler.write(DialogFile.latestFile, code, false);
-                    appendProcess("Export success.");
+                    appendProcess("Export success");
                 }
                 frame.setEnabled(true);
                 frame.toFront();
@@ -698,7 +704,7 @@ public class GUI extends MoveJFrame {
         if (!dialog.isCancelSelected()) {
             sourceCode.setFont(dialog.getSelectedFont());
             prettifyCode.setFont(dialog.getSelectedFont());
-            appendProcess("Changed font.");
+            appendProcess("Changed font");
         }
     }
 
@@ -719,7 +725,34 @@ public class GUI extends MoveJFrame {
             String encrypt = ClientListener.requestHandle(description, language, stdin, script);
             Client.send(encrypt);
             System.out.println("Sent: " + Client.currentPacket + "\n");
-            appendProcess("Sent compile request.");
+            appendProcess("Sent compile request");
+
+            new Thread(new Runnable() {
+                @SuppressWarnings("BusyWait")
+                @Override
+                public void run() {
+                    compiler.setEnabled(false);
+                    Font currentFont = compiler.getFont();
+                    compiler.setFont(compiler.getFont().deriveFont(Font.BOLD, 20));
+                    GUI.isCompiling = true;
+                    int i = 1;
+                    while (GUI.isCompiling) {
+                        compiler.setText(("Compiling" + i++)
+                                .replace("1",".")
+                                .replace("2","..")
+                                .replace("3","...")
+                                .replace("4","...."));
+                        if (i == 4)
+                            i = 1;
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException ignored) {}
+                    }
+                    compiler.setText("Done, print result...");
+                    compiler.setFont(currentFont);
+                    compiler.setEnabled(true);
+                }
+            }).start();
         } catch (IOException | NullPointerException e) {
             //exception throw khi ko thể kết nói tối server.
             try {

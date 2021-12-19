@@ -1,6 +1,6 @@
 package Server;
 
-import Security.SecretKeyGenerator;
+import Security.AES_Encryptor;
 
 import javax.net.ssl.SSLSocket;
 import java.io.DataInputStream;
@@ -40,7 +40,7 @@ public class SSLVerifier extends Thread implements Runnable {
             String uid = tokenizer.nextToken();
             uid = UUID.fromString(uid).toString();
             String secretKey = tokenizer.nextToken();
-            if (secretKey.length() != SecretKeyGenerator.KEY_BIT_LENGTH) //secretKey phải 16 bit
+            if (secretKey.length() != AES_Encryptor.KEY_BIT_LENGTH) //secretKey phải 16 bit
                 return;
 
             //Tạo đối tượng user với uid và key vừa nhận
