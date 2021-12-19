@@ -14,12 +14,12 @@ public class Formatter {
     final private WebClient webClient;
 
     /**
-     * @param language Truyền đúng cú pháp: java, python3, cpp, php, c
+     * @param language Truyền đúng cú pháp: java, python2, cpp, php, c
      */
     public Formatter (String script, String language) {
         this.script = convertEscapeCharacters(script).replace("'", "\\'");;
 
-        if (language.equals("python3"))
+        if (language.equals("python2"))
             language = "python";
         else if (language.equals("cpp"))
             language= "c";
@@ -69,9 +69,9 @@ public class Formatter {
     }
 
     // testcase
-    public static void main (String[] args) {
-        Formatter formatter = new Formatter(read("demoFiles/sum.java"), "java");
-        System.out.println(formatter.format());
+//    public static void main (String[] args) {
+//        Formatter formatter = new Formatter(read("demoFiles/sum.java"), "java");
+//        System.out.println(formatter.format());
 //        StringTokenizer string;
 //        String temp;
 //        long totalTime = 0;
@@ -91,5 +91,5 @@ public class Formatter {
 //            totalTime += leftTime;
 //        }
 //        System.out.println("average time: " + totalTime/times);
-    }
+//    }
 }

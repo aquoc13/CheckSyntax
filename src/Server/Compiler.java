@@ -16,7 +16,7 @@ public class Compiler {
     private static String clientSecret = "99d6af4497da794a0e1e1fe5dd45e9cedb80487feb9da835c5e6153c9d9463a5"; //Đăng nhập rồi lấy ở https://www.jdoodle.com/compiler-api/
     /**
      * @param stdin Truyền sẵn dữ liệu đầu vào
-     * @param language Truyền đúng cú pháp: java, python3, cpp, php, c
+     * @param language Truyền đúng cú pháp: java, python2, cpp, php, c
      */
     public Compiler (String script, String stdin, String language) {
         String versionIndex = getVersionIndex(language);
@@ -138,13 +138,14 @@ public class Compiler {
 
     private String getVersionIndex (String language) {
         switch (language) {
-            case "java":
-            case "python3":
-            case "php":
+            case "python2":
                 return "3";
+            case "java":
+            case "php":
+                return "4";
             case "c":
             case "cpp":
-                return "4";
+                return "5";
             default:
                 return "0";
         }
