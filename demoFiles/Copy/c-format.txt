@@ -1,0 +1,13 @@
+// Tìm max của 3 số a,b,c nhập từ bàn phím (nhập vào input 3 số)
+ 
+#include<stdio.h>
+
+int main()
+{int a,b,c,max;scanf("%d",&a);scanf("%d",&b);
+scanf("%d",&c);
+ max=a; if(b>max)
+    {max=b; 
+    }if(c>max)
+      {max=c;
+     }printf("gia tri lon nhat la: %d",max);
+    return 0;}
