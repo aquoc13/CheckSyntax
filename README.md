@@ -18,3 +18,9 @@ Dùng để format và kiểm tra code của: java, C++, C# và Python
 2. Server:
 - Demo phần bảo mật: Public key, private key, Client ID 
 - demo lệnh spend
+
+# Câu hỏi:
+1. Trình bày xử lý luồng của Client (Thread), có bao nhiêu luồng? CV của mỗi luồng? Xử lý của mỗi luồng? Executor - quản lý thread pool.
+- 2 luồng.
+
+2. Client kết nói server được thực hiện thế nào?
