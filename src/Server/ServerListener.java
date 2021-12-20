@@ -45,12 +45,12 @@ public class ServerListener extends Thread implements Runnable{
         try {
             System.out.println("Client " + fromIP + " is connected.");
 
-            //Xử lý xác minh uid gửi từ Client trước khi cho phép trao đổi data.
-            verify();
-
             //Lặp liên tục để nhận request từ phía Client.
             while(true) {
                 try {
+                    //Xử lý xác minh uid gửi từ Client trước khi cho phép trao đổi data.
+                    verify();
+
                     //Chờ thông điệp từ Client rồi xử lý
                     String line = receive();
                     if (line == null || line.isEmpty() || line.isBlank())
@@ -87,7 +87,6 @@ public class ServerListener extends Thread implements Runnable{
                             + " to " + fromIP
                             + " - ID: " + user.getUID());
                 } catch (Exception e) {
-                    e.printStackTrace();
                     //Có exception thì break vòng lặp để close socket.
                     break;
                 }
@@ -123,7 +122,7 @@ public class ServerListener extends Thread implements Runnable{
                 ||Server.banList.containsValue(user.getUID())) {
                 send("Banned");
                 close();
-                return;
+                throw new IOException();
             }
 
             //check trong list user.

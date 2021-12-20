@@ -24,6 +24,10 @@ public class ClientListener extends Thread implements Runnable{
                 if (response == null || response.isEmpty() || response.isBlank() || response.equals("wait"))
                     continue;
 
+                if (response.equalsIgnoreCase("stop")) {
+                    throw new IOException();
+                }
+
                 System.out.println("Receive: " + response + "\n");
 
                 if (response.equalsIgnoreCase("Expired")) {
@@ -117,8 +121,6 @@ public class ClientListener extends Thread implements Runnable{
             System.out.println("Server closed");
             Client.Frame.appendProcess("Disconnected");
         }
-        Client.close();
-        Client.Frame.appendProcess("Client listener close. Restart");
     }
 
     /**

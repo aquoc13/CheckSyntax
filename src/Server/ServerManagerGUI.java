@@ -445,13 +445,17 @@ public class ServerManagerGUI extends javax.swing.JFrame {
 
         String getIP = toUser.getSocket().getInetAddress().getHostAddress();
         Server.banList.putIfAbsent(getIP, toUser.getUID());
+        try {
+            toUser.getSocket().close();
+        } catch (IOException ignored) {}
+        _btnCheck.doClick();
     }
 
     private void unbanUser() {
         if (!toUser.getStatus().equals("banned"))
             return;
-        toUser.setSessionTime(-1);
         toUser.setStatus("offline");
+        renewSession();
         String getIP = toUser.getSocket().getInetAddress().getHostAddress();
         Server.banList.remove(getIP);
         _btnCheck.doClick();
@@ -461,7 +465,10 @@ public class ServerManagerGUI extends javax.swing.JFrame {
         if (!to.getStatus().equals("online"))
             return;
         try {
-            to.setStatus("offline");
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(to.getSocket().getOutputStream()));
+            out.write("stop");
+            out.newLine();
+            out.flush();
             to.getSocket().close();
         } catch (IOException ignored) {}
     }
