@@ -22,6 +22,8 @@ public class FileHandler {
                                     "Generic Files (.java, .py, .php, .c, .cpp, .jpg)", //mô tả các loại file được phép
                                     supportedExtension); //khai báo các loại file được phép
         JFileChooser fileChooser = new JFileChooser();
+        File workingDirectory = new File(System.getProperty("user.dir"));
+        fileChooser.setCurrentDirectory(workingDirectory);
         fileChooser.setFileFilter(filter);
 
         if (fileChooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) { //APPROVE_OPTION là kết quả trả về nếu nhấn nút yes/OK trên Dialog

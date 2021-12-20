@@ -45,12 +45,12 @@ public class ServerListener extends Thread implements Runnable{
         try {
             System.out.println("Client " + fromIP + " is connected.");
 
+            //Xử lý xác minh uid gửi từ Client trước khi cho phép trao đổi data.
+            verify();
+
             //Lặp liên tục để nhận request từ phía Client.
             while(true) {
                 try {
-                    //Xử lý xác minh uid gửi từ Client trước khi cho phép trao đổi data.
-                    verify();
-
                     //Chờ thông điệp từ Client rồi xử lý
                     String line = receive();
                     if (line == null || line.isEmpty() || line.isBlank())
