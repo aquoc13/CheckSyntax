@@ -66,3 +66,7 @@ This
 MyClass
 temp2
 Instructor
+Optional
+this.data
+this.bar
+Optional.empty
