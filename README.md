@@ -24,3 +24,6 @@ Dùng để format và kiểm tra code của: java, C++, C# và Python
 - 2 luồng.
 
 2. Client kết nói server được thực hiện thế nào?
+
+3. <3 yêu
+   
